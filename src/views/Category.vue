@@ -1,8 +1,13 @@
 <template>
   <div class="box">
-    <Navbar />
+    <navbar />
     <div class="panel">
-      <div class="panel-content" />
+      <div class="panel-content">
+        <folder-list />
+        <folder-list />
+        <folder-list />
+        <folder-list />
+      </div>
     </div>
   </div>
 </template>
@@ -12,10 +17,11 @@
  * 分类页面
  */
 import Navbar from '@/components/Navbar'
+import FolderList from '@/components/FolderList'
 
 export default {
   name: 'Category',
-  components: { Navbar },
+  components: { Navbar, FolderList },
   data () {
     return {
 
@@ -50,7 +56,5 @@ export default {
 .panel-content {
   width: 730px;
   margin: 10px auto;
-  padding: 24px;
-  background-color: white;
 }
 </style>
