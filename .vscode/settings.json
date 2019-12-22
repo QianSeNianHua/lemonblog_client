@@ -1,0 +1,34 @@
+{
+    "git.ignoreLimitWarning": true,
+    "eslint.enable": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "eslint.options": {
+        "configFile": "F:/php/www/Vue/lemonblog_client/.eslintrc.js"
+    },
+
+
+    "vetur.format.defaultFormatter.html": "js-beautify-html",
+    "vetur.format.defaultFormatterOptions": {
+        "js-beautify-html": {
+            "wrap_line_length": 120,
+            "wrap_attributes": "auto",
+            "end_with_newline": false
+        },
+        "prettier": {
+            "semi": false, //不使用分号结尾
+            "singleQuote": true, //使用单引号
+            "eslintIntegration": true  //开启 eslint 支持
+        }
+    },
+    //根据文件后缀名定义vue文件类型
+    "files.associations": {
+        "*.vue": "vue"
+    },
+
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.tabCompletion": "off"
+
+}
