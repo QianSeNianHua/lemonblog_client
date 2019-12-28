@@ -2,12 +2,12 @@
   <div class="navbar">
     <div class="box">
       <div class="left_panel">
-        <div class="nickname">博客</div>
-        <el-menu mode="horizontal" :default-active="'2'" :router="false">
-          <el-menu-item index="1">首页</el-menu-item>
-          <el-menu-item index="2">分类</el-menu-item>
-          <el-menu-item index="3">文档</el-menu-item>
-          <el-menu-item index="4">我的开源</el-menu-item>
+        <div class="nickname" @click="toHome">博客</div>
+        <el-menu mode="horizontal" :default-active="routeIndex" :router="true">
+          <el-menu-item index="/">首页</el-menu-item>
+          <el-menu-item index="/category">分类</el-menu-item>
+          <el-menu-item index="/docBrief">文档</el-menu-item>
+          <el-menu-item index="/openSource">我的开源</el-menu-item>
         </el-menu>
       </div>
       <div class="right_panel">
@@ -23,9 +23,34 @@
 <script>
 export default {
   name: 'Navbar',
+  props: {
+    // 导航索引
+    menuIndex: String,
+  },
+  model: {
+    prop: 'word'
+  },
+  props: {
+    word: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
+      // 搜索关键字
       search: ''
+    }
+  },
+  computed: {
+    // 获取路由名字，设置当前导航索引
+    routeIndex () {
+      return this.$route.path
+    }
+  },
+  methods: {
+    toHome () {
+      this.$router.push({ name: 'Home' })
     }
   }
 }

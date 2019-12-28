@@ -1,21 +1,42 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '@/views/Home.vue'
-import Category from '@/views/Category.vue'
+import Home from '@/views/Home'
+import DocPanel from '@/views/DocPanel'
+import Category from '@/views/Category'
+import DocBrief from '@/views/DocBrief'
+import OpenSource from '@/views/OpenSource'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: Home
   },
   {
-    path: '/catagory',
-    name: 'catagory',
-    component: Category
+    path: '',
+    name: 'DocPanel',
+    component: DocPanel,
+    redirect: '/category',
+    children: [
+      {
+        path: 'category',
+        name: 'PanelCategory',
+        component: Category
+      },
+      {
+        path: 'docBrief',
+        name: 'PanelDocBrief',
+        component: DocBrief
+      },
+      {
+        path: 'openSource',
+        name: 'PanelOpenSource',
+        component: OpenSource
+      }
+    ]
   }
 ]
 

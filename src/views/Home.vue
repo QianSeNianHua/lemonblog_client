@@ -23,7 +23,7 @@ export default {
   mounted () {},
   methods: {
     goto () {
-      this.$router.push({ name: 'catagory' })
+      this.$router.push({ name: 'PanelCategory' })
     }
   }
 }
