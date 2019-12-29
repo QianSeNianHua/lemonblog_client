@@ -1,6 +1,6 @@
 <template>
   <div class="docPanel">
-    <navbar />
+    <navbar v-model="word" />
     <div class="panel">
       <router-view />
     </div>
@@ -12,7 +12,13 @@ import Navbar from '@/components/Navbar'
 
 export default {
   name: 'DocPanel',
-  components: { Navbar }
+  components: { Navbar },
+  data () {
+    return {
+      // 搜索的关键字
+      word: ''
+    }
+  }
 }
 </script>
 

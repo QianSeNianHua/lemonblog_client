@@ -19,7 +19,8 @@ module.exports = {
             'max': 3,
             'allowFirstLine': false
         }
-    }]
+    }],
+    'vue/html-self-closing': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'

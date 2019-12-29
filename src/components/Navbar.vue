@@ -11,7 +11,7 @@
         </el-menu>
       </div>
       <div class="right_panel">
-        <el-input placeholder="搜索" v-model="search">
+        <el-input placeholder="搜索" v-model="search" @input="$emit('input', search)">
           <i slot="suffix" class="el-input__icon el-icon-search btn-search" />
         </el-input>
         <el-avatar icon="el-icon-user-solid" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
@@ -21,14 +21,16 @@
 </template>
 
 <script>
+/**
+ * 导航栏
+ * @param v-model 搜索关键字
+ */
+
 export default {
   name: 'Navbar',
-  props: {
-    // 导航索引
-    menuIndex: String,
-  },
   model: {
-    prop: 'word'
+    prop: 'word',
+    event: 'input'
   },
   props: {
     word: {
@@ -46,6 +48,11 @@ export default {
     // 获取路由名字，设置当前导航索引
     routeIndex () {
       return this.$route.path
+    }
+  },
+  watch: {
+    word (value) {
+      this.search = value
     }
   },
   methods: {

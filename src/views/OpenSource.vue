@@ -1,5 +1,5 @@
 <template>
-  <div class="openSource"></div>
+  <div class="openSource" />
 </template>
 
 <script>
