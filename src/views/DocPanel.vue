@@ -42,7 +42,6 @@ export default {
   top: 60px;
   bottom: 0px;
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: hidden;
 }
 </style>

@@ -64,6 +64,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.navbar {
+  z-index: 100;
+}
 .box {
   height: 60px;
   user-select: none;
