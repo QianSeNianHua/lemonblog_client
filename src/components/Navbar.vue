@@ -47,7 +47,13 @@ export default {
   computed: {
     // 获取路由名字，设置当前导航索引
     routeIndex () {
-      return this.$route.path
+      if (this.$route.name === 'PanelCategoryDocs') {
+        return '/category'
+      } if (this.$route.name === 'PanelArticle') {
+        return '/docBrief'
+      } else {
+        return this.$route.path
+      }
     }
   },
   watch: {

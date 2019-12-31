@@ -1,6 +1,6 @@
 <template>
   <div class="category">
-    <folder-list />
+    <folder-list @to="toCategoryDocs" />
     <folder-list />
     <folder-list />
     <folder-list />
@@ -19,6 +19,11 @@ export default {
   data () {
     return {
 
+    }
+  },
+  methods: {
+    toCategoryDocs () {
+      this.$router.push({ name: 'PanelCategoryDocs' })
     }
   }
 }

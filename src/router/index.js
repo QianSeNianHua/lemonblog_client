@@ -6,6 +6,8 @@ import DocPanel from '@/views/DocPanel'
 import Category from '@/views/Category'
 import DocBrief from '@/views/DocBrief'
 import OpenSource from '@/views/OpenSource'
+import CategoryDocs from '@/views/CategoryDocs'
+import Article from '@/views/Article'
 
 Vue.use(VueRouter)
 
@@ -27,9 +29,19 @@ const routes = [
         component: Category
       },
       {
+        path: 'category/categoryDocs',
+        name: 'PanelCategoryDocs',
+        component: CategoryDocs
+      },
+      {
         path: 'docBrief',
         name: 'PanelDocBrief',
         component: DocBrief
+      },
+      {
+        path: 'docBrief/article',
+        name: 'PanelArticle',
+        component: Article
       },
       {
         path: 'openSource',

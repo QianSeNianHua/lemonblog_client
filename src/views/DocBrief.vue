@@ -2,19 +2,19 @@
   <div class="docBrief">
     <vue-scroll @handle-scroll="transDate">
       <div class="box" ref="artlist">
-        <div class="content_title">2019年</div>
-        <div class="content_list">
+        <div class="content_title">{{ curYear }}年</div>
+        <div class="content_list" data-year="2019">
           <div class="date">
             <span class="date_title">12月27日</span>
             <span class="date_point"></span>
           </div>
           <div class="list">
-            <article-card />
+            <article-card :to="{ name: 'PanelArticle' }" />
             <article-card />
             <article-card />
           </div>
         </div>
-        <div class="content_list">
+        <div class="content_list" data-year="2018">
           <div class="date">
             <span class="date_title">12月26日</span>
             <span class="date_point"></span>
@@ -23,7 +23,7 @@
             <article-card />
           </div>
         </div>
-        <div class="content_list">
+        <div class="content_list" data-year="2017">
           <div class="date">
             <span class="date_title">12月25日</span>
             <span class="date_point"></span>
@@ -53,13 +53,44 @@ import ArticleCard from '@/components/ArticleCard'
 export default {
   name: 'DocBrief',
   components: { ArticleCard },
+  data () {
+    return {
+      curYear: '2019'
+    }
+  },
+  computed: {
+    // 获取.content_list节点
+    listEl () {
+      const lists = Array.from(this.$refs.artlist.children)
+      lists.shift()
+
+      return lists
+    }
+  },
   mounted () {
     let childs = Array.from(this.$refs.artlist.children)
     childs.shift()
-    console.log(childs[1])
   },
   methods: {
     transDate (vertical, horizontal, nativeEvent) {
+      let barScrollTop = vertical.scrollTop
+
+      // 获取滚动到当前出现的节点，并更改顶部的年日期
+      let el = this.listEl.filter((item, index) => {
+        if (index < this.listEl.length - 1) {
+          if (barScrollTop >= item.offsetTop && barScrollTop < this.listEl[index + 1].offsetTop) {
+            return true
+          }
+        } else {
+          if (barScrollTop >= item.offsetTop) {
+            return true
+          }
+        }
+      })
+
+      if (el.length > 0) {
+        this.curYear = el[0].getAttribute('data-year')
+      }
     }
   }
 }

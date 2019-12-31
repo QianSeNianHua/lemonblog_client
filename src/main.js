@@ -14,7 +14,8 @@ Vue.use(vuescroll, {
   ops: {
     vuescroll: {
       mode: 'native',
-      sizeStrategy: 'percent'
+      sizeStrategy: 'percent',
+      detectResize: false
     },
     scrollPanel: {
       speed: 500,

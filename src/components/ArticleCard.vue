@@ -1,5 +1,5 @@
 <template>
-  <el-card class="articleCard">
+  <div class="card articleCard" @click="redirect">
     <img src="http://img.sj33.cn/uploads/201908/010424E10-7.jpg" class="card_image">
     <div class="card_body">
       <h3>javscriptjavascript       javscs javascri</h3>
@@ -16,7 +16,7 @@
         <span class="comment"></span>0
       </el-tag>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -52,20 +52,32 @@ export default {
     comment: {
       type: Number,
       default: 0
+    },
+    // 页面跳转
+    to: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  methods: {
+    redirect () {
+      this.$router.push(this.to)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.el-card {
+.card {
   width: 300px;
   border-radius: 15px;
   display: inline-block;
-  
-  /deep/ .el-card__body {
-    padding: 0px;
-  }
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+  border: 1px solid #EBEEF5;
+  background-color: #FFF;
+  color: #303133;
+  transition: .3s;
+  overflow: hidden;
 }
 .card_image {
   display: block;

@@ -1,5 +1,5 @@
 <template>
-  <div class="folderList">
+  <div class="folderList" @click="$emit('to')">
     <img src="https://www.easyicon.net/api/resizeApi.php?id=1183173&size=128" class="icon">
     <div class="content" :style="{ 'background-color': randomColor() }">
       <span class="text">Javascript文件夹</span>
