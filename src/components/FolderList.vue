@@ -11,6 +11,7 @@
 <script>
 /**
  * 分类
+ * @event to 页面跳转
  */
 
 export default {

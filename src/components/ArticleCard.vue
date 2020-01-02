@@ -20,6 +20,10 @@
 </template>
 
 <script>
+/**
+ * 文章卡片
+ */
+
 export default {
   name: 'ArticleCard',
   props: {

@@ -9,6 +9,12 @@
 </template>
 
 <script>
+/**
+ * 返回按钮
+ * @param content 显示所属的分类文件夹
+ * @param to 页面跳转
+ */
+
 export default {
   name: 'BackPage',
   props: {
