@@ -3,7 +3,7 @@
     <div class="panel">
       <div class="panel-input">
         <textarea placeholder="写下你的评论..."></textarea>
-        <i class="emoji" aita-label="icon: smile">
+        <i class="emoji" aita-label="icon: smile" v-show="true">
           <svg 
             viewBox="64 64 896 896"
             width="1em" height="1em"
@@ -15,7 +15,7 @@
           </svg>
         </i>
       </div>
-      <div class="panel-info">
+      <div class="panel-info" v-show="false">
         <div class="comment-info">
           <i class="el-icon-chat-dot-square"></i>
           <label>评论 15</label>
@@ -30,11 +30,23 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
+      <div class="panel-btn">
+        <el-button
+          type="primary" round size="small"
+          disabled
+        >
+          发布
+        </el-button>
+        <el-button round size="small" disabled>取消</el-button>
+      </div>
     </div>
   </footer>
 </template>
 
 <script>
+/**
+ * 页面底部评论
+ */
 export default {
   name: 'Comment',
   methods: {
@@ -68,6 +80,7 @@ footer.comment {
   }
   .panel-input {
     flex-shrink: 0;
+    position: relative;
 
     &>textarea {
       padding: 8px 18px;
@@ -137,6 +150,14 @@ footer.comment.focus {
   & i.emoji {
     font-size: 20px;
     font-weight: bold;
+    color: #969696;
+    position: absolute;
+    top: 26px;
+    right: 30px;
+    cursor: pointer;
+  }
+  & .panel-btn {
+    margin-top: 24px;
   }
 }
 </style>

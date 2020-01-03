@@ -1,6 +1,6 @@
 <template>
   <div class="article">
-    <vue-scroll>
+    <vue-scroll ref="vuescroll">
       <div class="box">
         <div class="box-content">
           <h1 class="header__title">Vue自定义组件中Props中接收数组或对象</h1>
@@ -34,6 +34,9 @@
           </article>
         </div>
         <comment></comment>
+        <back-top :target="target">
+          <el-button icon="el-icon-caret-top" circle></el-button>
+        </back-top>
       </div>
     </vue-scroll>
   </div>
@@ -44,11 +47,21 @@
  * 文章页面
  */
 import Comment from '@/components/Comment'
+import BackTop from '@/components/BackTop'
 
 export default {
   name: 'Article',
   components: {
-    Comment
+    Comment,
+    BackTop
+  },
+  data () {
+    return {
+      target: null
+    }
+  },
+  mounted () {
+    this.target = this.$refs.vuescroll
   }
 }
 </script>

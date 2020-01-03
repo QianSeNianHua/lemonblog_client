@@ -20,7 +20,8 @@ module.exports = {
             'allowFirstLine': false
         }
     }],
-    'vue/html-self-closing': 'off'
+    'vue/html-self-closing': 'off',
+    'vue/require-default-prop': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'
