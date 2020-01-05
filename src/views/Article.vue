@@ -1,6 +1,6 @@
 <template>
   <div class="article">
-    <vue-scroll ref="vuescroll">
+    <vue-scroll ref="refVuescroll">
       <div class="box">
         <div class="box-content">
           <h1 class="header__title">Vue自定义组件中Props中接收数组或对象</h1>
@@ -33,7 +33,28 @@
             <p>和李世民不同，李治特别宠爱武则天，言听计从。两个人如胶似漆般天天黏在一起，自然不需多少时日就能生儿育女了，而且这一生就是三男两女。</p>
           </article>
         </div>
-        <comment></comment>
+        <section class="comment-content" id="comment-content">
+          <h3 class="header__title">
+            <span class="note__title">全部评论</span>
+            <span class="note__num">15</span>
+            <span :class="{ note__author: true, selected: authorSelected }" @click="authorHandle">只看作者</span>
+            <span class="note__datetime" @click="datetimeHandle">
+              时间排序
+              <i :class="{ 'el-icon-sort-down': dateSelected, 'el-icon-sort-up': !dateSelected }"></i>
+            </span>
+          </h3>
+          <brief-state>
+            <brief-state-one @reply="replyOne">
+              <brief-state-two @reply="replyTwo"></brief-state-two>
+            </brief-state-one>
+          </brief-state>
+          <el-pagination
+            background layout="prev, pager, next" :total="50"
+            :page-size="10"
+          >
+          </el-pagination>
+        </section>
+        <comment @toComment="toComment" ref="refComment"></comment>
         <back-top :target="target">
           <el-button icon="el-icon-caret-top" circle></el-button>
         </back-top>
@@ -48,20 +69,48 @@
  */
 import Comment from '@/components/Comment'
 import BackTop from '@/components/BackTop'
+import BriefState from '@/components/BriefState'
+import BriefStateOne from '@/components/BriefStateOne'
+import BriefStateTwo from '@/components/BriefStateTwo'
 
 export default {
   name: 'Article',
   components: {
     Comment,
-    BackTop
+    BackTop,
+    BriefState,
+    BriefStateOne,
+    BriefStateTwo
   },
   data () {
     return {
-      target: null
+      target: null,
+      authorSelected: false, // 只看作者
+      dateSelected: false // 时间排序
     }
   },
   mounted () {
-    this.target = this.$refs.vuescroll
+    this.target = this.$refs.refVuescroll
+  },
+  methods: {
+    authorHandle () {
+      this.authorSelected = !this.authorSelected
+    },
+    datetimeHandle () {
+      this.dateSelected = !this.dateSelected
+    },
+    // 滚动到评论区位置
+    toComment () {
+      this.$refs.refVuescroll.scrollIntoView('#comment-content', 500)
+    },
+    // 第一层的评论回复
+    replyOne () {
+      this.$refs.refComment.enterInput('')
+    },
+    // 第二层的评论回复
+    replyTwo () {
+      this.$refs.refComment.enterInput('@浅色年华 ')
+    }
   }
 }
 </script>
@@ -80,6 +129,11 @@ export default {
   &>.box-content {
     background-color: white;
     margin: 10px 0px;
+    margin-bottom: 20px;
+    padding: 24px;
+  }
+  &>.comment-content {
+    background-color: white;
     margin-bottom: 96px;
     padding: 24px;
   }
@@ -121,5 +175,123 @@ export default {
       background-color: #DEEDCB;
     }
   }
+}
+.comment-content {
+  &>h3.header__title {
+    border-left: 4px solid #409EFF;
+    margin-bottom: 30px;
+    padding-left: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    height: 26px;
+    line-height: 26px;
+    color: #404040;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    
+    &>.note__title {
+      flex-shrink: 0;
+    }
+    &>.note__num {
+      font-size: 14px;
+      font-weight: 400;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+    &>.note__author, &>.note__datetime {
+      display: inline-block;
+      height: 26px;
+      border: 1px solid #eee;
+      border-radius: 13px;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+      padding: 2px 8px;
+      cursor: pointer;
+      color: #969696;
+      margin-left: 12px;
+      user-select: none;
+      flex-shrink: 0;
+
+      &.selected {
+        background-color: #409EFF;
+        color: white;
+      }
+    }
+  }
+  &>.comment__ul {
+    &>.comment__li {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+
+      &>.el-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        background-color: aliceblue;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+      &>.content {
+        margin-left: 10px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #eee;
+        flex-grow: 1;
+
+        &>.nickname {
+          height: 20px;
+          font-size: 15px;
+          line-height: 20px;
+          color: #404040;
+        }
+        &>.datetime {
+          height: 17px;
+          font-size: 12px;
+          line-height: 17px;
+          margin-top: 2px;
+          color: #969696;
+        }
+        &>.text {
+          margin-top: 10px;
+          font-size: 16px;
+          line-height: 24px;
+          color: #404040;
+          white-space: pre-wrap;
+        }
+        &>.feedback {
+          height: 20px;
+          font-size: 15px;
+          line-height: 20px;
+          margin-top: 12px;
+          color: #b0b0b0;
+
+          i {
+            cursor: pointer;
+          }
+          i::before {
+            margin-right: 5px;
+          }
+          i:hover {
+            color: #409EFF;
+          }
+        }
+      }
+    }
+  }
+  &>.el-pagination {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+}
+ul, li {
+  list-style: none;
 }
 </style>

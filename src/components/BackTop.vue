@@ -1,13 +1,11 @@
 <template>
-  <div class="backTop">
-    <div
-      v-show="isShow" @click.stop="toTop" :style="{ right: styleRight, bottom: styleBottom }"
-      class="btn"
-    >
-      <slot>
-        <el-icon></el-icon>
-      </slot>
-    </div>
+  <div
+    :class="{ backTop: true, 'backTop-enter': animate }" v-show="isShow" @click.stop="toTop"
+    :style="{ right: styleRight, bottom: styleBottom }"
+  >
+    <slot>
+      <el-icon></el-icon>
+    </slot>
   </div>
 </template>
 
@@ -18,10 +16,7 @@
  */
 import * as td from 'throttle-debounce'
 
-const cubic = value => Math.pow(value, 3)
-const easeInOutCubic = value => value < 0.5
-  ? cubic(value * 2) / 2
-  : 1 - cubic((1 - value) * 2) / 2
+let timeId = 0
 
 export default {
   name: 'BackTop',
@@ -46,6 +41,8 @@ export default {
   },
   data () {
     return {
+      // 动画显示按钮
+      animate: false,
       // 显示按钮
       isShow: false
     }
@@ -88,32 +85,25 @@ export default {
     },
     // 滚动时显示按钮
     handleScroll (vertical) {
+      clearTimeout(timeId)
+
       if (vertical.scrollTop >= this.visibilityHeight) {
         this.isShow = true
+
+        timeId = setTimeout(() => {
+          this.animate = true
+        }, 100)
       } else {
-        this.isShow = false
+        this.animate = false
+        
+        timeId = setTimeout(() => {
+          this.isShow = false
+        }, 600)
       }
     },
     // 滚动到顶部
     toTop () {
-      const el = this.getTarget
-      const beginTime = Date.now()
-      const beginValue = el.scrollTop
-      const rAF = window.requestAnimationFrame || (func => setTimeout(func, 16))
-      const frameFunc = () => {
-        const progress = (Date.now() - beginTime) / 500
-
-        console.log(beginValue)
-
-        if (progress < 1) {
-          el.scrollTop = beginValue * (1 - easeInOutCubic(progress))
-          rAF(frameFunc)
-        } else {
-          el.scrollTo({ y: 0 }, 300, 'easeInQuad')
-        }
-      }
-
-      rAF(frameFunc)
+      this.target.scrollTo({ y: 0 }, 300, 'easeInQuad')
     }
   }
 }
@@ -124,8 +114,12 @@ export default {
   position: fixed;
   bottom: 40px;
   right: 40px;
-}
-.btn {
-  transition: all 1s ease;
+  opacity: 0;
+  transition: all 0.5s ease;
+  z-index: 100;
+
+  &.backTop-enter {
+    opacity: 1;
+  }
 }
 </style>

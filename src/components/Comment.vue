@@ -1,9 +1,12 @@
 <template>
-  <footer class="comment focus">
+  <footer :class="{ comment: true, focus: animate }">
     <div class="panel">
       <div class="panel-input">
-        <textarea placeholder="写下你的评论..."></textarea>
-        <i class="emoji" aita-label="icon: smile" v-show="true">
+        <textarea
+          placeholder="写下你的评论..." :readonly="!isFocus" v-model="word"
+          @click="focusHandle" ref="refInput"
+        ></textarea>
+        <i class="emoji" aita-label="icon: smile" v-show="isFocus">
           <svg 
             viewBox="64 64 896 896"
             width="1em" height="1em"
@@ -15,12 +18,12 @@
           </svg>
         </i>
       </div>
-      <div class="panel-info" v-show="false">
-        <div class="comment-info">
+      <div class="panel-info" v-show="!isFocus">
+        <div class="comment-info" @click="$emit('toComment')">
           <i class="el-icon-chat-dot-square"></i>
           <label>评论 15</label>
         </div>
-        <el-dropdown placement="bottom" trigger="click" @command="dropdown">
+        <el-dropdown placement="bottom" trigger="click" @command="dropdownHandle">
           <button class="dropdown-btn">
             <i class="el-icon-more"></i>
           </button>
@@ -30,14 +33,14 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div class="panel-btn">
+      <div class="panel-btn" v-show="isFocus">
         <el-button
           type="primary" round size="small"
-          disabled
+          :disabled="!word"
         >
           发布
         </el-button>
-        <el-button round size="small" disabled>取消</el-button>
+        <el-button round size="small" @click="cancelHandle">取消</el-button>
       </div>
     </div>
   </footer>
@@ -46,17 +49,58 @@
 <script>
 /**
  * 页面底部评论
+ * @event toComment 滚动到评论区位置
+ * @event enterInput (被父组件调用)input聚焦并且初始化值
  */
+
+let timeId = 0
+
 export default {
   name: 'Comment',
+  data () {
+    return {
+      isFocus: false, // 是否可写评论
+      animate: false, // 动画显示
+      word: '' // 评论内容
+    }
+  },
   methods: {
-    dropdown (command) {
+    dropdownHandle (command) {
+    },
+    // input聚焦
+    focusHandle () {
+      clearTimeout(timeId)
+
+      this.animate = true
+      
+      timeId = setTimeout(() => {
+        this.isFocus = true
+      }, 500)
+    },
+    // input失焦
+    cancelHandle () {
+      clearTimeout(timeId)
+
+      if (this.isFocus) {
+        this.isFocus = false
+        this.animate = false
+        this.word = ''
+      }
+    },
+    // 被父组件调用
+    enterInput (word) {
+      this.focusHandle()
+
+      this.$refs.refInput.focus()
+      this.word = word
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+@duration: 0.5s;
+
 footer.comment {
   height: 56px;
   position: fixed;
@@ -67,6 +111,7 @@ footer.comment {
   background-color: white;
   box-shadow: 0px -2px 7px 0px rgba(0,0,0,0.1);
   user-select: none;
+  transition: all @duration ease;
   
   &>.panel {
     width: 730px;
@@ -95,6 +140,8 @@ footer.comment {
       resize: none;
       outline: 0;
       color: #404040;
+      cursor: text;
+      transition: all @duration ease;
 
       &::-webkit-input-placeholder {
         color: #999;
@@ -157,7 +204,11 @@ footer.comment.focus {
     cursor: pointer;
   }
   & .panel-btn {
-    margin-top: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
   }
 }
 </style>
