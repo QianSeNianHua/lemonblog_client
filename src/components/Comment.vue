@@ -6,7 +6,10 @@
           placeholder="写下你的评论..." :readonly="!isFocus" v-model="word"
           @click="focusHandle" ref="refInput"
         ></textarea>
-        <i class="emoji" aita-label="icon: smile" v-show="isFocus">
+        <i
+          class="emoji" aita-label="icon: smile" v-show="isFocus"
+          @click="$emit('emojiClick')"
+        >
           <svg 
             viewBox="64 64 896 896"
             width="1em" height="1em"
@@ -51,6 +54,7 @@
  * 页面底部评论
  * @event toComment 滚动到评论区位置
  * @event enterInput (被父组件调用)input聚焦并且初始化值
+ * @event emojiClick 表情库点击事件
  */
 
 let timeId = 0

@@ -5,8 +5,18 @@
         "source.fixAll.eslint": true
     },
     "eslint.options": {
-        "configFile": "F:/php/www/Vue/lemonblog_client/.eslintrc.js"
+        "configFile": "F:/wamp64/www/lemonblog_client/.eslintrc.js"
     },
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        {
+            "language": "vue",
+            "autoFix": true
+        },
+        "vue"
+    ],
+    "eslint.autoFixOnSave": true,
 
 
     "vetur.format.defaultFormatter.html": "js-beautify-html",

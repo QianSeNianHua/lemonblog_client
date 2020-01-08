@@ -6,7 +6,11 @@
           <h1 class="header__title">Vue自定义组件中Props中接收数组或对象</h1>
           <div class="header__info">
             <span class="folder">
-              <img src="https://www.easyicon.net/api/resizeApi.php?id=1183173&size=128" />
+              <el-image fit="cover" src="https://www.easyicon.net/api/resizeApi.php?id=1183173&size=128">
+                <div slot="error">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
               <label>文件夹</label>
             </span>
             <time>2019.01.20 09:07:39</time>
@@ -54,10 +58,13 @@
           >
           </el-pagination>
         </section>
-        <comment @toComment="toComment" ref="refComment"></comment>
+        <comment @toComment="toComment" @emojiClick="emojiClick" ref="refComment"></comment>
         <back-top :target="target">
           <el-button icon="el-icon-caret-top" circle></el-button>
         </back-top>
+        <focus-panel ref="refFocusPanel">
+          <emoji-store></emoji-store>
+        </focus-panel>
       </div>
     </vue-scroll>
   </div>
@@ -72,6 +79,8 @@ import BackTop from '@/components/BackTop'
 import BriefState from '@/components/BriefState'
 import BriefStateOne from '@/components/BriefStateOne'
 import BriefStateTwo from '@/components/BriefStateTwo'
+import FocusPanel from '@/components/FocusPanel'
+import EmojiStore from '@/components/EmojiStore'
 
 export default {
   name: 'Article',
@@ -80,13 +89,16 @@ export default {
     BackTop,
     BriefState,
     BriefStateOne,
-    BriefStateTwo
+    BriefStateTwo,
+    FocusPanel,
+    EmojiStore
   },
   data () {
     return {
       target: null,
       authorSelected: false, // 只看作者
-      dateSelected: false // 时间排序
+      dateSelected: false, // 时间排序
+      fpshow: false
     }
   },
   mounted () {
@@ -102,6 +114,10 @@ export default {
     // 滚动到评论区位置
     toComment () {
       this.$refs.refVuescroll.scrollIntoView('#comment-content', 500)
+    },
+    // 表情库点击事件
+    emojiClick () {
+      this.$refs.refFocusPanel.focus()
     },
     // 第一层的评论回复
     replyOne () {
@@ -155,10 +171,16 @@ export default {
     &>*:not(:last-child) {
       margin-right: 10px;
     }
-    &>.folder>img {
+    &>.folder>.el-image {
       width: 20px;
       height: 20px;
       vertical-align: middle;
+
+      /deep/ i {
+        position: absolute;
+        top: 3.5px;
+        left: 3.5px;
+      }
     }
   }
   &>.content__text {
@@ -290,6 +312,13 @@ export default {
     margin-bottom: 8px;
     text-align: center;
   }
+}
+.focusPanel {
+  position: fixed;
+  bottom: 50px;
+  right: 50%;
+  transform: translateX(350px);
+  z-index: 101;
 }
 ul, li {
   list-style: none;
