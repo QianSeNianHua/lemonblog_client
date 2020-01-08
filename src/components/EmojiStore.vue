@@ -2,7 +2,7 @@
   <div class="emojiStore">
     <el-carousel
       trigger="click" :autoplay="false" height="208px"
-      arrow="never"
+      arrow="never" @mousewheel.native.stop="throttledScrollHandle()" ref="refCarousel"
     >
       <el-carousel-item>1</el-carousel-item>
       <el-carousel-item>2</el-carousel-item>
@@ -15,9 +15,26 @@
 /**
  * 评论用的表情库
  */
+import * as td from 'throttle-debounce'
 
 export default {
-  name: 'EmojiStore'
+  name: 'EmojiStore',
+  methods: {
+    throttledScrollHandle () {
+      return td.throttle(300, this.scrollHandle)
+    },
+    scrollHandle (e) {
+      // left向左滚动，right向右滚动
+      console.log(123)
+      let dir = e.deltaY < 0 ? 'right' : 'left'
+
+      if (dir === 'left') {
+        this.$refs.refCarousel.next()
+      } else {
+        this.$refs.refCarousel.prev()
+      }
+    }
+  }
 }
 </script>
 

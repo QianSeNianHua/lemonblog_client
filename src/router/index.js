@@ -9,6 +9,8 @@ import OpenSource from '@/views/OpenSource'
 import CategoryDocs from '@/views/CategoryDocs'
 import Article from '@/views/Article'
 
+import Parent from '@/components/Test/Parent'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -49,6 +51,10 @@ const routes = [
         component: OpenSource
       }
     ]
+  },
+  {
+    path: '/test',
+    component: Parent
   }
 ]
 
