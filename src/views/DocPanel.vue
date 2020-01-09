@@ -1,6 +1,6 @@
 <template>
   <div class="docPanel">
-    <navbar v-model="word" />
+    <navbar :word.sync="word" @confirm="confirm" />
     <div class="panel">
       <router-view />
     </div>
@@ -8,18 +8,28 @@
 </template>
 
 <script>
+/**
+ * iframe
+ */
+import { Vue, Component } from 'vue-property-decorator'
 import Navbar from '@/components/Navbar'
 
-export default {
-  name: 'DocPanel',
-  components: { Navbar },
-  data () {
-    return {
-      // 搜索的关键字
-      word: ''
-    }
+@Component({
+  components: {
+    Navbar
+  }
+})
+class DocPanel extends Vue {
+  // 搜索关键字
+  word = ''
+
+  // 确认搜索
+  confirm () {
+    console.log(this.word)
   }
 }
+
+export default DocPanel
 </script>
 
 <style lang="less" scoped>

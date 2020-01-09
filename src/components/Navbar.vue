@@ -11,8 +11,8 @@
         </el-menu>
       </div>
       <div class="right_panel">
-        <el-input placeholder="搜索" v-model="search" @input="$emit('input', search)">
-          <i slot="suffix" class="el-input__icon el-icon-search btn-search" />
+        <el-input placeholder="搜索" v-model="SyncedWord" @keyup.native.enter="confirm">
+          <i slot="suffix" class="el-input__icon el-icon-search btn-search" @click="confirm" />
         </el-input>
         <el-avatar icon="el-icon-user-solid" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
       </div>
@@ -23,50 +23,40 @@
 <script>
 /**
  * 导航栏
- * @param v-model 搜索关键字
+ * @param :word.sync 搜索关键字
+ * @event @confirm 确认搜索
  */
+import { Vue, Component, PropSync, Emit } from 'vue-property-decorator'
 
-export default {
-  name: 'Navbar',
-  model: {
-    prop: 'word',
-    event: 'input'
-  },
-  props: {
-    word: {
-      type: String,
-      default: ''
-    }
-  },
-  data () {
-    return {
-      // 搜索关键字
-      search: ''
-    }
-  },
-  computed: {
-    // 获取路由名字，设置当前导航索引
-    routeIndex () {
-      if (this.$route.name === 'PanelCategoryDocs') {
-        return '/category'
-      } if (this.$route.name === 'PanelArticle') {
-        return '/docBrief'
-      } else {
-        return this.$route.path
-      }
-    }
-  },
-  watch: {
-    word (value) {
-      this.search = value
-    }
-  },
-  methods: {
-    toHome () {
-      this.$router.push({ name: 'Home' })
+@Component
+class Navbar extends Vue {
+  // 搜索关键字
+  @PropSync('word', { type: String })
+  SyncedWord
+
+  // 获取路由名字，设置当前导航索引
+  get routeIndex () {
+    if (this.$route.name === 'PanelCategoryDocs') {
+      return '/category'
+    } if (this.$route.name === 'PanelArticle') {
+      return '/docBrief'
+    } else {
+      return this.$route.path
     }
   }
+
+  // 跳转到首页
+  toHome () {
+    this.$router.push({ name: 'Home' })
+  }
+
+  // 确认搜索
+  @Emit()
+  confirm () {
+  }
 }
+
+export default Navbar
 </script>
 
 <style lang="less" scoped>
