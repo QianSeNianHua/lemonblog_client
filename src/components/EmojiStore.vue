@@ -1,20 +1,13 @@
 <template>
   <div class="emojiStore">
-    <el-carousel
-      trigger="click" :autoplay="false" height="208px"
-      arrow="never" @mousewheel.native.stop="throttledScrollHandle" ref="refCarousel"
-    >
-      <el-carousel-item>1</el-carousel-item>
-      <el-carousel-item>2</el-carousel-item>
-      <el-carousel-item>3</el-carousel-item>
-      <el-carousel-item>4</el-carousel-item>
-      <el-carousel-item>5</el-carousel-item>
-    </el-carousel>
-    <!-- <carousel-panel height="208px">
-      <carousel-item>1</carousel-item>
+    <carousel-panel height="208px" @mousewheel.native.stop="throttledScrollHandle" ref="refCarousel">
+      <carousel-item>😥</carousel-item>
       <carousel-item>2</carousel-item>
       <carousel-item>3</carousel-item>
-    </carousel-panel> -->
+      <carousel-item>4</carousel-item>
+      <carousel-item>5</carousel-item>
+      <carousel-item>6</carousel-item>
+    </carousel-panel>
   </div>
 </template>
 
@@ -23,7 +16,7 @@
  * 评论用的表情库
  */
 import { Vue, Component, Ref } from 'vue-property-decorator'
-import { throttle, debounce } from 'throttle-debounce'
+import { throttle } from 'throttle-debounce'
 import CarouselPanel from '@/components/Carousel/Carousel-panel'
 import CarouselItem from '@/components/Carousel/Carousel-item'
 

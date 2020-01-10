@@ -5,7 +5,7 @@
     </div>
     <ul class="carousel__indicators carousel__indicators--horizontal">
       <li :class="['carousel__indicator', 'carousel__indicator--horizontal', { 'is-active': index === activeIndex }]" v-for="(item, index) in items" :key="index">
-        <button class="carousel__button"></button>
+        <button class="carousel__button" @mousedown="pointClickHandle" @click="throttledClick(index)"></button>
       </li>
     </ul>
   </div>
@@ -16,6 +16,8 @@
  * 走马灯——ul
  */
 import { Component, Prop, Watch } from 'vue-property-decorator'
+import { addResizeListener, removeResizeListener } from '@/until/resizeObserver.js'
+import { throttle } from 'throttle-debounce'
 import Main from './main.js'
 
 @Component
@@ -32,15 +34,27 @@ class CarouselPanel extends Main {
 
   @Watch('activeIndex')
   onActiveIndexChanged (val, oldVal) {
-    console.log(val)
+    if (oldVal < 0) return
+
     this.resetItemPosition(oldVal)
+  }
+
+  created () {
+    this.throttledClick = throttle(300, true, index => {
+      this.setActiveIndex(index)
+    })
   }
 
   mounted () {
     this.updateItems()
-    this.setActiveIndex(this.initialIndex)
     this.$nextTick(() => {
+      addResizeListener(this.$el, this.resetItemPosition)
+      this.setActiveIndex(this.initialIndex)
     })
+  }
+
+  destroyed () {
+    if (this.$el) removeResizeListener(this.$el, this.resetItemPosition)
   }
 }
 

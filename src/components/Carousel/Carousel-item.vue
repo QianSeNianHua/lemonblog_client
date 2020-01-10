@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="carousel-item is-animating" :class="{ 'is-active': active }" :style="itemStyle"
-  >
+  <div class="carousel-item" :class="{ 'is-active': active, 'is-animating': animating }" :style="itemStyle">
     <slot></slot>
   </div>
 </template>
@@ -15,8 +13,9 @@ import { Vue, Component } from 'vue-property-decorator'
 @Component
 class CarouselItem extends Vue {
   active = false
+  animating = false
   translate = 0
-  scale = 0
+  scale = 1
 
   get itemWidth () {
     return this.$parent.$el.offsetWidth
@@ -27,7 +26,13 @@ class CarouselItem extends Vue {
   }
 
   get itemStyle () {
-    return `transform: translateX(${this.translate})px, scale(1);`
+    const value = `translateX(${this.translate}px) scale(${this.scale})`
+
+    const style = {
+      transform: value
+    }
+
+    return style
   }
 
   calcTranslate (index, activeIndex) {
@@ -35,15 +40,21 @@ class CarouselItem extends Vue {
   }
 
   translateItem (index, activeIndex, oldIndex) {
-    // let posiCount = Math.floor(this.itemLength / 2)
+    this.active = index === activeIndex
+    this.animating = index === activeIndex || index === oldIndex
 
-    // if (activeIndex <= index && )
+    let posiCount = Math.ceil(this.itemLength / 2)
 
-    // const last = (activeIndex - 1) < 0 ? this.itemLength - 1 : activeIndex - 1
+    let trans = index - activeIndex
 
-    // if (index !== last) {
-
-    // }
+    // 关键算法
+    if (trans > posiCount - 1) {
+      this.translate = this.calcTranslate(index - this.itemLength, activeIndex)
+    } else if (trans < posiCount - this.itemLength) {
+      this.translate = this.calcTranslate(index + this.itemLength, activeIndex)
+    } else {
+      this.translate = this.calcTranslate(index, activeIndex)
+    }
   }
 }
 

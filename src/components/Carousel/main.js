@@ -13,7 +13,31 @@ class Main extends Vue {
   }
 
   setActiveIndex (val) {
+    val = parseInt(val)
+
+    if (val >= this.items.length) {
+      val = 0
+    } else if (val < 0) {
+      val = this.items.length - 1
+    }
+
     this.activeIndex = val
+  }
+
+  prev () {
+    this.setActiveIndex(this.activeIndex - 1)
+  }
+
+  next () {
+    this.setActiveIndex(this.activeIndex + 1)
+  }
+
+  pointClickHandle (e) {
+    if (e && e.preventDefault) {
+      e.preventDefault()
+    } else {
+      window.event.returnValue = false
+    }
   }
 }
 

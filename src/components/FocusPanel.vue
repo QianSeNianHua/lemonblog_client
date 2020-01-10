@@ -31,9 +31,7 @@ export default {
     },
     // 失焦后
     blurHandle () {
-      // this.visible = false
-
-      console.log('blur')
+      this.visible = false
       
       this.$emit('afterBlur')
     },
@@ -64,9 +62,5 @@ export default {
   user-select: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
   border-radius: 4px;
-
-  &:focus {
-    border: 2px solid salmon;
-  }
 }
 </style>
