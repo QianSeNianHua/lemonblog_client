@@ -31,7 +31,7 @@ export default {
     },
     // 失焦后
     blurHandle () {
-      this.visible = false
+      // this.visible = false
       
       this.$emit('afterBlur')
     },

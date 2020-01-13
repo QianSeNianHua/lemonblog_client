@@ -10,8 +10,6 @@
           </div>
           <div class="list">
             <article-card :to="{ name: 'PanelArticle' }" />
-            <article-card />
-            <article-card />
           </div>
         </div>
         <div class="content_list" data-year="2018">
@@ -39,6 +37,11 @@
             <article-card />
           </div>
         </div>
+        <el-pagination
+          background layout="prev, pager, next" :total="50"
+          :page-size="10"
+        >
+        </el-pagination>
       </div>
     </vue-scroll>
   </div>
@@ -48,52 +51,53 @@
 /**
  * 文档
  */
+import { Vue, Component } from 'vue-property-decorator'
 import ArticleCard from '@/components/ArticleCard'
 
-export default {
-  name: 'DocBrief',
-  components: { ArticleCard },
-  data () {
-    return {
-      curYear: '2019'
-    }
-  },
-  computed: {
-    // 获取.content_list节点
-    listEl () {
-      const lists = Array.from(this.$refs.artlist.children)
-      lists.shift()
+@Component({
+  components: {
+    ArticleCard
+  }
+})
+class DocBrief extends Vue {
+  curYear = '2019' // 当前列表所在时间线——年
 
-      return lists
-    }
-  },
   mounted () {
     let childs = Array.from(this.$refs.artlist.children)
     childs.shift()
-  },
-  methods: {
-    transDate (vertical, horizontal, nativeEvent) {
-      let barScrollTop = vertical.scrollTop
+  }
 
-      // 获取滚动到当前出现的节点，并更改顶部的年日期
-      let el = this.listEl.filter((item, index) => {
-        if (index < this.listEl.length - 1) {
-          if (barScrollTop >= item.offsetTop && barScrollTop < this.listEl[index + 1].offsetTop) {
-            return true
-          }
-        } else {
-          if (barScrollTop >= item.offsetTop) {
-            return true
-          }
+  // 获取.content_list节点
+  get listEl () {
+    const lists = Array.from(this.$refs.artlist.children)
+    lists.shift()
+
+    return lists
+  }
+
+  transDate (vertical, horizontal, nativeEvent) {
+    let barScrollTop = vertical.scrollTop
+
+    // 获取滚动到当前出现的节点，并更改顶部的年日期
+    let el = this.listEl.filter((item, index) => {
+      if (index < this.listEl.length - 1) {
+        if (barScrollTop >= item.offsetTop && barScrollTop < this.listEl[index + 1].offsetTop) {
+          return true
         }
-      })
-
-      if (el.length > 0) {
-        this.curYear = el[0].getAttribute('data-year')
+      } else {
+        if (barScrollTop >= item.offsetTop) {
+          return true
+        }
       }
+    })
+
+    if (el.length > 0) {
+      this.curYear = el[0].getAttribute('data-year')
     }
   }
 }
+
+export default DocBrief
 </script>
 
 <style lang="less" scoped>
@@ -189,6 +193,15 @@ export default {
   &>.articleCard {
     margin: 15px 50px;
     margin-left: 0px;
+  }
+}
+.el-pagination {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+
+  &.is-background /deep/ .btn-next, &.is-background /deep/ .btn-prev, &.is-background /deep/ .el-pager li {
+    background-color: white;
   }
 }
 </style>

@@ -14,8 +14,11 @@
         <el-input placeholder="搜索" v-model="SyncedWord" @keyup.native.enter="confirm">
           <i slot="suffix" class="el-input__icon el-icon-search btn-search" @click="confirm" />
         </el-input>
-        <el-avatar icon="el-icon-user-solid" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+        <el-avatar icon="el-icon-user-solid" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" @mousedown.native.prevent="dropdownMenu" />
       </div>
+      <focus-panel ref="refFocusPanel">
+        <context-menu width="160px" :data="menuData"></context-menu>
+      </focus-panel>
     </div>
   </div>
 </template>
@@ -26,13 +29,24 @@
  * @param :word.sync 搜索关键字
  * @event @confirm 确认搜索
  */
-import { Vue, Component, PropSync, Emit } from 'vue-property-decorator'
+import { Vue, Component, PropSync, Emit, Ref } from 'vue-property-decorator'
+import FocusPanel from '@/components/FocusPanel'
+import ContextMenu from '@/components/ContextMenu'
 
-@Component
+@Component({
+  components: {
+    FocusPanel,
+    ContextMenu
+  }
+})
 class Navbar extends Vue {
   // 搜索关键字
   @PropSync('word', { type: String })
   SyncedWord
+
+  menuData = [
+    { label: '登录', icon: '<i class="el-icon-delete"></i>', color: 'red' }
+  ]
 
   // 获取路由名字，设置当前导航索引
   get routeIndex () {
@@ -54,6 +68,14 @@ class Navbar extends Vue {
   @Emit()
   confirm () {
   }
+
+  @Ref()
+  refFocusPanel
+
+  // 头像的下拉菜单
+  dropdownMenu () {
+    this.refFocusPanel.focus()
+  }
 }
 
 export default Navbar
@@ -72,6 +94,7 @@ export default Navbar
   flex-direction: row;
   justify-content: space-between;
   background-color: white;
+  position: relative;
 }
 .left_panel {
   height: 100%;
@@ -149,6 +172,13 @@ export default Navbar
     cursor: pointer;
     margin-right: 25px;
     flex-shrink: 0;
+    font-size: 30px;
   }
+}
+.focusPanel {
+  position: absolute;
+  top: 55px;
+  right: 20px;
+  z-index: 101;
 }
 </style>

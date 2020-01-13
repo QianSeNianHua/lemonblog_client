@@ -22,7 +22,7 @@ function emojiExchangeString (str) {
 
 // 字符转为表情符
 function StringjiExchangeEmoji (str) {
-  var reg = /\\&#.*?;/g
+  var reg = /&#.*?;/g
 
   var result = str.replace(reg, char => {
     var H, L, code
@@ -41,7 +41,7 @@ function StringjiExchangeEmoji (str) {
   return result
 }
 
-module.exports = {
+export {
   emojiExchangeString,
   StringjiExchangeEmoji
 }

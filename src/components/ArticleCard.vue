@@ -1,6 +1,10 @@
 <template>
   <div class="card articleCard" @click="redirect">
-    <img src="http://img.sj33.cn/uploads/201908/010424E10-7.jpg" class="card_image">
+    <el-image src="https://user-gold-cdn.xitu.io/2019/11/8/16e4a65bafa2c3e5?imageView2/1/w/104/h/144/q/95/format/webp/interlace/1" fit="cover">
+      <div slot="error" class="image__error">
+        <i class="el-icon-picture-outline"></i>
+      </div>
+    </el-image>
     <div class="card_body">
       <h3>javscriptjavascript       javscs javascri</h3>
       <div>
@@ -83,11 +87,22 @@ export default {
   transition: .3s;
   overflow: hidden;
 }
-.card_image {
+.el-image {
   display: block;
   width: 100%;
   height: 200px;
   margin: 0px auto;
+
+  & /deep/ .image__error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #f5f7fa;
+    color: #909399;
+    font-size: 30px;
+  }
 }
 .card_body {
   width: 100%;

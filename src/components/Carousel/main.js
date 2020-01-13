@@ -31,14 +31,6 @@ class Main extends Vue {
   next () {
     this.setActiveIndex(this.activeIndex + 1)
   }
-
-  pointClickHandle (e) {
-    if (e && e.preventDefault) {
-      e.preventDefault()
-    } else {
-      window.event.returnValue = false
-    }
-  }
 }
 
 export default Main

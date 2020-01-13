@@ -53,8 +53,9 @@
 /**
  * 页面底部评论
  * @event toComment 滚动到评论区位置
- * @event enterInput (被父组件调用)input聚焦并且初始化值
+ * @event initInput (被父组件调用)input聚焦并且初始化值
  * @event emojiClick 表情库点击事件
+ * @event appendInput (被父组件调用)追加input值
  */
 
 let timeId = 0
@@ -91,12 +92,20 @@ export default {
         this.word = ''
       }
     },
-    // 被父组件调用
-    enterInput (word) {
+    // 被父组件调用，初始化input值
+    initInput (word) {
       this.focusHandle()
 
       this.$refs.refInput.focus()
       this.word = word
+    },
+    // 被父组件调用，追加input值
+    appendInput (word, isFoucs = false) {
+      if (isFoucs) {
+        this.$refs.refInput.focus()
+      }
+
+      this.word += word
     }
   }
 }

@@ -5,7 +5,7 @@
     </div>
     <ul class="carousel__indicators carousel__indicators--horizontal">
       <li :class="['carousel__indicator', 'carousel__indicator--horizontal', { 'is-active': index === activeIndex }]" v-for="(item, index) in items" :key="index">
-        <button class="carousel__button" @mousedown="pointClickHandle" @click="throttledClick(index)"></button>
+        <button class="carousel__button" @mousedown.prevent="throttledClick(index)"></button>
       </li>
     </ul>
   </div>
@@ -102,7 +102,7 @@ export default CarouselPanel
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background-color: white;
+  background-color: rgba(0,0,0);
   border: 0;
   outline: 0;
   padding: 0;
