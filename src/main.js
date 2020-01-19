@@ -4,7 +4,8 @@ import router from './router'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import vuescroll from 'vuescroll/dist/vuescroll-native'
+import vuescroll from 'vuescroll/dist/vuescroll-native' // 滚动条
+import IconSvg from '@/components/IconSvg'
 
 Vue.config.productionTip = false
 
@@ -35,6 +36,7 @@ Vue.use(vuescroll, {
   // 定义组件名称
   name: 'VueScroll'
 })
+Vue.component('icon-svg', IconSvg)
 
 new Vue({
   router,

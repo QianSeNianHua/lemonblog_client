@@ -17,6 +17,7 @@
 <script>
 /**
  * 评论用的表情库
+ * @event @command 表情符号
  */
 import { Vue, Component, Ref, Emit } from 'vue-property-decorator'
 import { throttle } from 'throttle-debounce'

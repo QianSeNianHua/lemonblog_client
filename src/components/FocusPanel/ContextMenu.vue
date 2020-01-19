@@ -1,17 +1,16 @@
 <template>
   <div class="contextMenu" :style="{ width }">
     <ul class="menu-main">
-      <li
-        class="menu-item__one" v-for="(one, i) in data" :key="i"
-        :style="{ color: one.color }"
-      >
-        <span class="leftIcon icon" v-html="one.icon"></span>
-        <span class="label">{{ one.label }}</span>
-      </li>
-      <hr>
-      <li class="menu-item__one">
-        <span class="label">打开文件位置</span>
-      </li>
+      <template v-for="(one, i) in data">
+        <li
+          class="menu-item__one" :key="i" :style="{ color: one.color }"
+          v-if="!one.hr" @click="command(one.cmd)"
+        >
+          <span class="leftIcon icon" v-html="one.icon"></span>
+          <span class="label">{{ one.label }}</span>
+        </li>
+        <hr :key="i" v-else>
+      </template>
     </ul>
   </div>
 </template>
@@ -19,17 +18,32 @@
 <script>
 /**
  * 右键菜单
+ * @data props
+ * @event command 菜单的执行命令
  */
 
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 
 @Component
 class ContextMenu extends Vue {
+  // 容器宽度
   @Prop({ type: String, default: '160px' })
   width
 
-  @Prop({ type: [], default: [] })
+  /**
+   * 右键菜单
+   * [
+   *   { label: '登录', icon: '<i class="el-icon-delete"></i>', color: 'red', cmd: 'login' },
+   *   { hr: true }
+   * ]
+   */
+  @Prop({ type: Array, default: [] })
   data
+
+  @Emit()
+  command (cmd) {
+    return cmd
+  }
 }
 
 export default ContextMenu

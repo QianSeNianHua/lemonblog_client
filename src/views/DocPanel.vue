@@ -1,9 +1,10 @@
 <template>
   <div class="docPanel">
-    <navbar :word.sync="word" @confirm="confirm" />
+    <navbar :word.sync="word" @confirm="confirm" @dropdownCmd="dropdownCmd" />
     <div class="panel">
       <router-view />
     </div>
+    <dialog-login ref="refDialogLogin"></dialog-login>
   </div>
 </template>
 
@@ -11,21 +12,33 @@
 /**
  * iframe
  */
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
 import Navbar from '@/components/Navbar'
+import DialogLogin from '@/components/DialogLogin'
 
 @Component({
   components: {
-    Navbar
+    Navbar,
+    DialogLogin
   }
 })
 class DocPanel extends Vue {
   // 搜索关键字
   word = ''
 
+  @Ref()
+  refDialogLogin
+
   // 确认搜索
   confirm () {
     console.log(this.word)
+  }
+
+  // 导航栏的下拉菜单的执行命令
+  dropdownCmd (cmd) {
+    if (cmd === 'login') {
+      this.refDialogLogin.visible = true
+    }
   }
 }
 

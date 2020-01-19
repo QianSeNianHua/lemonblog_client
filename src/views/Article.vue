@@ -41,13 +41,10 @@
           >
           </el-pagination>
         </section>
-        <comment @toComment="toComment" @emojiClick="emojiClick" ref="refComment"></comment>
+        <comment @to-comment="toComment" ref="refComment"></comment>
         <back-top :target="target">
           <el-button icon="el-icon-caret-top" circle></el-button>
         </back-top>
-        <focus-panel ref="refFocusPanel">
-          <emoji-store @command="command"></emoji-store>
-        </focus-panel>
       </div>
     </vue-scroll>
   </div>
@@ -57,14 +54,12 @@
 /**
  * 文章页面
  */
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
 import Comment from '@/components/Comment'
 import BackTop from '@/components/BackTop'
 import BriefState from '@/components/BriefState/BriefState'
 import BriefStateOne from '@/components/BriefState/BriefStateOne'
 import BriefStateTwo from '@/components/BriefState/BriefStateTwo'
-import FocusPanel from '@/components/FocusPanel'
-import EmojiStore from '@/components/EmojiStore'
 
 @Component({
   components: {
@@ -72,19 +67,27 @@ import EmojiStore from '@/components/EmojiStore'
     BackTop,
     BriefState,
     BriefStateOne,
-    BriefStateTwo,
-    FocusPanel,
-    EmojiStore
+    BriefStateTwo
   }
 })
 class Article extends Vue {
+  // 滚动对象
   target = null
-  authorSelected = false // 只看作者
-  dateSelected = false // 时间排序
-  fpshow = false
+
+  // 只看作者
+  authorSelected = false
+
+  // 时间排序
+  dateSelected = false
+
+  @Ref()
+  refVuescroll
+
+  @Ref()
+  refComment
 
   mounted () {
-    this.target = this.$refs.refVuescroll
+    this.target = this.refVuescroll
   }
 
   authorHandle () {
@@ -97,27 +100,17 @@ class Article extends Vue {
 
   // 滚动到评论区位置
   toComment () {
-    this.$refs.refVuescroll.scrollIntoView('#comment-content', 500)
-  }
-
-  // 表情库点击事件
-  emojiClick () {
-    this.$refs.refFocusPanel.focus()
+    this.refVuescroll.scrollIntoView('#comment-content', 500)
   }
 
   // 第一层的评论回复
   replyOne () {
-    this.$refs.refComment.initInput('')
+    this.refComment.initInput('')
   }
 
   // 第二层的评论回复
   replyTwo () {
-    this.$refs.refComment.initInput('@浅色年华 ')
-  }
-
-  // 点击表情包，在input中输入
-  command (str) {
-    this.$refs.refComment.appendInput(str, false)
+    this.refComment.initInput('@浅色年华 ')
   }
 }
 
@@ -305,13 +298,6 @@ export default Article
     margin-bottom: 8px;
     text-align: center;
   }
-}
-.focusPanel {
-  position: fixed;
-  bottom: 50px;
-  right: 50%;
-  transform: translateX(350px);
-  z-index: 101;
 }
 ul, li {
   list-style: none;

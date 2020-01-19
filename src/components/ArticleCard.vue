@@ -6,10 +6,10 @@
       </div>
     </el-image>
     <div class="card_body">
-      <h3>javscriptjavascript       javscs javascri</h3>
-      <div>
+      <h3>vue结合typescript实现代码提示功能</h3>
+      <!-- <div>
         <p>内容第三方时代浮点数防守打法都是分都是</p><p>内的发范德萨范德萨发速度发送到发送的浮点数容</p><p>内容第三方时代浮点数防守打法都是分都是</p><p>内的发范德萨范德萨发速度发送到发送的浮点数容</p>
-      </div>
+      </div> -->
     </div>
     <div class="card_foot">
       <el-tag type="success" title="文件夹">文件夹</el-tag>
@@ -90,7 +90,7 @@ export default {
 .el-image {
   display: block;
   width: 100%;
-  height: 200px;
+  height: 150px;
   margin: 0px auto;
 
   & /deep/ .image__error {
@@ -106,7 +106,7 @@ export default {
 }
 .card_body {
   width: 100%;
-  height: 180px;
+  height: 100px;
   padding: 20px;
   border-bottom: 1px solid #d1dbe5;
   display: flex;

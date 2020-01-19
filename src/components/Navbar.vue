@@ -16,8 +16,8 @@
         </el-input>
         <el-avatar icon="el-icon-user-solid" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" @mousedown.native.prevent="dropdownMenu" />
       </div>
-      <focus-panel ref="refFocusPanel">
-        <context-menu width="160px" :data="menuData"></context-menu>
+      <focus-panel ref="refFocusPanel" :trans="'top'">
+        <context-menu width="160px" :data="menuData" @command="dropdownCmd"></context-menu>
       </focus-panel>
     </div>
   </div>
@@ -28,10 +28,11 @@
  * 导航栏
  * @param :word.sync 搜索关键字
  * @event @confirm 确认搜索
+ * @event @dropdownCmd 头像的下拉菜单的执行命令
  */
 import { Vue, Component, PropSync, Emit, Ref } from 'vue-property-decorator'
-import FocusPanel from '@/components/FocusPanel'
-import ContextMenu from '@/components/ContextMenu'
+import FocusPanel from '@/components/FocusPanel/FocusPanel'
+import ContextMenu from '@/components/FocusPanel/ContextMenu'
 
 @Component({
   components: {
@@ -45,7 +46,13 @@ class Navbar extends Vue {
   SyncedWord
 
   menuData = [
-    { label: '登录', icon: '<i class="el-icon-delete"></i>', color: 'red' }
+    { label: '浅色年华' },
+    { label: '2019-01-14' },
+    { label: '简介' },
+    { label: '13112361801' },
+    { hr: true },
+    { label: '登录', color: '#67c23a', cmd: 'login' },
+    { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
   ]
 
   // 获取路由名字，设置当前导航索引
@@ -72,9 +79,23 @@ class Navbar extends Vue {
   @Ref()
   refFocusPanel
 
-  // 头像的下拉菜单
+  // 头像的下拉菜单的显示隐藏
   dropdownMenu () {
-    this.refFocusPanel.focus()
+    if (this.refFocusPanel.visible) {
+      this.refFocusPanel.blur()
+    } else {
+      this.refFocusPanel.focus()
+    }
+  }
+
+  // 头像的下拉菜单的执行命令
+  @Emit('dropdownCmd')
+  dropdownCmd (cmd) {
+    if (cmd) {
+      this.refFocusPanel.blur()
+
+      return cmd
+    }
   }
 }
 
