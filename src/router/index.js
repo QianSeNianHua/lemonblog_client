@@ -19,11 +19,15 @@ const routes = [
     name: 'Home',
     component: Home
   },
+  // {
+  //   path: '/:id',
+  //   name: 'HomeId',
+  //   component: Home
+  // },
   {
     path: '',
     name: 'DocPanel',
     component: DocPanel,
-    redirect: '/category',
     children: [
       {
         path: 'category',
@@ -55,6 +59,10 @@ const routes = [
   {
     path: '/test',
     component: Parent
+  },
+  {
+    path: '*',
+    redirect: '/'
   }
 ]
 

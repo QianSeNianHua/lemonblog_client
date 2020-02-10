@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <section>
-      <h1 title="进入博客" @click="goto">柠檬味的蓝海</h1>
+      <h1 title="进入博客" @click="goto">{{ nickname }}</h1>
       <p class="desc">前端程序员</p>
       <div class="mess">
         <p>#你愿做我的账中妖👦👧么#</p>
@@ -14,19 +14,42 @@
 /**
  * 博客首页
  */
+import { Vue, Component } from 'vue-property-decorator'
+import * as API from '@/api'
 
-export default {
-  name: 'Home',
-  data () {
-    return {}
-  },
-  mounted () {},
-  methods: {
-    goto () {
-      this.$router.push({ name: 'PanelCategory' })
-    }
+@Component()
+class Home extends Vue {
+  nickname = '博客'
+
+  mounted () {
+    // const userUUID = this.$route.query.id
+
+    // if (!userUUID) {
+    //   this.nickname = '博客'
+    // } else {
+    //   API.user.homeInfo(userUUID).then(res => {
+    //     if (res.code !== 0) return
+
+    //     const data = res.data
+
+    //     if (Reflect.ownKeys(data).length > 0) {
+    //       this.nickname = data.nickname
+
+    //       this.$store.dispatch('setUserUUID', userUUID)
+    //     } else {
+    //       this.nickname = '博客'
+    //     }
+    //   })
+    // }
+  }
+
+  // 跳转到分类页面
+  goto () {
+    this.$router.push({ name: 'PanelCategory' })
   }
 }
+
+export default Home
 </script>
 
 <style lang="less" scoped>

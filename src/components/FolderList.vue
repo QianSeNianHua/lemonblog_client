@@ -13,30 +13,40 @@
  * 分类
  * @event to 页面跳转
  */
+import { Vue, Component } from 'vue-property-decorator'
+import { random } from '@/until/random.js'
 
-export default {
-  name: 'FolderList',
-  data () {
-    return {
+const color = [ 'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green' ]
+
+let count = []
+
+@Component()
+class FolderList extends Vue {
+  // 随机颜色
+  randomColor () {
+    if (count.length === 0) {
+      count = [...color]
     }
-  },
-  created () {
-    this.color = [ 'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green' ]
-  },
-  mounted () {
-  },
-  methods: {
-    // 随机颜色
-    randomColor () {
-      const lower = 1
-      const upper = this.color.length
 
-      let cur = Math.floor(Math.random() * (upper - lower + 1)) + lower
+    let cur = null
 
-      return `var(--color-${this.color[cur - 1]})`
+    while (true) {
+      cur = random(0, color.length - 1)
+
+      let flag = count.some((item, index) => {
+        if (item === color[cur]) {
+          return count.splice(index, 1)
+        }
+      })
+
+      if (flag) break
     }
+
+    return `var(--color-${color[cur]})`
   }
 }
+
+export default FolderList
 </script>
 
 <style lang="less" scoped>
@@ -86,25 +96,5 @@ img.icon {
 </style>
 
 <style>
-  :root {
-    --color-red: #F34336;
-    --color-pink: #E81E63;
-    --color-purple: #9C27B0;
-    --color-deep-purple: #673AB7;
-    --color-indigo: #3F51B5;
-    --color-blue: #2196F2;
-    --color-light-blue: #03A9F3;
-    --color-cyan: #00BCD3;
-    --color-teal: #009688;
-    --color-green: #4CAF50;
-    --color-light-green: #8BC24A;
-    --color-lime: #CCDB39;
-    --color-yellow: #FEEA3B;
-    --color-amber: #FEC007;
-    --color-orange: #FF9800;
-    --color-deep-orange: #FE5722;
-    --color-brown: #795548;
-    --color-grey: #9E9E9E;
-    --color-blue-grey: #607D8B;
-  }
+@import '~@/until/style/folderListColor.less';
 </style>

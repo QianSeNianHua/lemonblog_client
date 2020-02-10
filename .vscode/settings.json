@@ -5,7 +5,7 @@
         "source.fixAll.eslint": true
     },
     "eslint.options": {
-        "configFile": "F:/wamp64/www/lemonblog_client/.eslintrc.js"
+        "configFile": "./.eslintrc.js"
     },
     "eslint.validate": [
         "javascript",

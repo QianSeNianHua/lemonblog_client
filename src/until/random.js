@@ -3,6 +3,6 @@
  * @param {Number} lower 下限
  * @param {Number} upper 上限
  */
-function random (lower, upper) {
+export function random (lower, upper) {
   return Math.floor(Math.random() * (upper - lower + 1)) + lower
 }

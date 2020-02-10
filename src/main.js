@@ -5,7 +5,8 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import vuescroll from 'vuescroll/dist/vuescroll-native' // 滚动条
-import IconSvg from '@/components/IconSvg'
+import IconSvg from './components/IconSvg' // svg
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -40,5 +41,6 @@ Vue.component('icon-svg', IconSvg)
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
