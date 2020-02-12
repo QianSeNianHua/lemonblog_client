@@ -8,6 +8,7 @@ import DocBrief from '@/views/DocBrief'
 import OpenSource from '@/views/OpenSource'
 import CategoryDocs from '@/views/CategoryDocs'
 import Article from '@/views/Article'
+import NotFoundHome from '@/views/NotFoundHome'
 
 import Parent from '@/components/Test/Parent'
 
@@ -15,21 +16,19 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    // 首页
+    path: '/p/:id',
     name: 'Home',
     component: Home
   },
-  // {
-  //   path: '/:id',
-  //   name: 'HomeId',
-  //   component: Home
-  // },
   {
-    path: '',
+    path: '/u/:id',
     name: 'DocPanel',
     component: DocPanel,
+    redirect: '/404',
     children: [
       {
+        // 分类
         path: 'category',
         name: 'PanelCategory',
         component: Category
@@ -40,6 +39,7 @@ const routes = [
         component: CategoryDocs
       },
       {
+        // 文档
         path: 'docBrief',
         name: 'PanelDocBrief',
         component: DocBrief
@@ -61,13 +61,22 @@ const routes = [
     component: Parent
   },
   {
+    path: '/404',
+    name: 'NotFoundHome',
+    component: NotFoundHome
+  },
+  {
     path: '*',
-    redirect: '/'
+    redirect: '/404'
   }
 ]
 
 const router = new VueRouter({
   routes
+})
+
+router.onError(err => {
+  console.log(err)
 })
 
 export default router

@@ -4,9 +4,9 @@
       <div class="left_panel">
         <div class="nickname" @click="toHome">博客</div>
         <el-menu mode="horizontal" :default-active="routeIndex" :router="true">
-          <el-menu-item index="/">首页</el-menu-item>
-          <el-menu-item index="/category">分类</el-menu-item>
-          <el-menu-item index="/docBrief">文档</el-menu-item>
+          <el-menu-item index="/" :route="{ name: 'Home', params: { id: $store.getters.getUserUUID } }">首页</el-menu-item>
+          <el-menu-item index="/category" :route="{ name: 'PanelCategory' }">分类</el-menu-item>
+          <el-menu-item index="/docBrief" :route="{ name: 'PanelDocBrief' }">文档</el-menu-item>
           <el-menu-item index="/openSource">我的开源</el-menu-item>
         </el-menu>
       </div>
@@ -30,7 +30,8 @@
  * @event @confirm 确认搜索
  * @event @dropdownCmd 头像的下拉菜单的执行命令
  */
-import { Vue, Component, PropSync, Emit, Ref } from 'vue-property-decorator'
+import { Vue, Component, PropSync, Emit, Ref, Watch } from 'vue-property-decorator'
+import * as API from '@/api'
 import FocusPanel from '@/components/FocusPanel/FocusPanel'
 import ContextMenu from '@/components/FocusPanel/ContextMenu'
 
@@ -45,30 +46,74 @@ class Navbar extends Vue {
   @PropSync('word', { type: String })
   SyncedWord
 
-  menuData = [
-    { label: '浅色年华' },
-    { label: '2019-01-14' },
-    { label: '简介' },
-    { label: '13112361801' },
-    { hr: true },
-    { label: '登录', color: '#67c23a', cmd: 'login' },
-    { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
-  ]
+  // 接口数据
+  res = {}
+
+  mounted () {
+    // 获取userUUID
+    console.log(this.$route.params.id)
+    this.getUserUUID(this.$route.params.id)
+  }
 
   // 获取路由名字，设置当前导航索引
   get routeIndex () {
-    if (this.$route.name === 'PanelCategoryDocs') {
+    const name = this.$route.name
+
+    if (name === 'PanelCategory') {
       return '/category'
-    } if (this.$route.name === 'PanelArticle') {
+    } else if (name === 'PanelCategoryDocs') {
+      return '/docBrief'
+    } if (name === 'PanelArticle') {
+      return '/docBrief'
+    } else if (name === 'PanelDocBrief') {
       return '/docBrief'
     } else {
       return this.$route.path
     }
   }
 
+  // 获取菜单
+  get menuData () {
+    let createTime = new Date(this.res.createTime)
+    let time = `${createTime.getUTCFullYear()}-${createTime.getUTCMonth() + 1}-${createTime.getUTCDate()}`
+
+    return [
+      { label: this.res.nickname },
+      { label: time },
+      { label: '简介' },
+      { label: this.res.account },
+      { hr: true },
+      { label: '登录', color: '#67c23a', cmd: 'login' },
+      { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
+    ]
+  }
+
+  @Watch('$route')
+  onRouteChanged (to, from) {
+    this.getUserUUID(this.$route.params.id)
+  }
+
+  // 接口获取用户信息
+  getUserUUID (userUUID) {
+    API.user.userInfo(userUUID).then(res => {
+      if (res.code !== 0) return
+
+      const data = res.data
+
+      if (Reflect.ownKeys(data).length > 0) {
+        this.res = data
+
+        this.$store.dispatch('setUserUUID', userUUID)
+      } else {
+        // 查找不到用户
+        this.$router.replace({ name: 'NotFoundHome' })
+      }
+    })
+  }
+
   // 跳转到首页
   toHome () {
-    this.$router.push({ name: 'Home' })
+    this.$router.push({ name: 'Home', params: { id: this.$store.getters.getUserUUID } })
   }
 
   // 确认搜索

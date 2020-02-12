@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <section>
-      <h1 title="进入博客" @click="goto">{{ nickname }}</h1>
+      <h1 title="进入博客" @click="goto">{{ res.nickname || '博客' }}</h1>
       <p class="desc">前端程序员</p>
       <div class="mess">
         <p>#你愿做我的账中妖👦👧么#</p>
@@ -14,38 +14,43 @@
 /**
  * 博客首页
  */
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import * as API from '@/api'
 
 @Component()
 class Home extends Vue {
-  nickname = '博客'
+  // 接口数据
+  res = {}
 
   mounted () {
-    // const userUUID = this.$route.query.id
+    this.getData(this.$route.params.id)
+  }
 
-    // if (!userUUID) {
-    //   this.nickname = '博客'
-    // } else {
-    //   API.user.homeInfo(userUUID).then(res => {
-    //     if (res.code !== 0) return
+  @Watch('$route')
+  onRouteChanged (to, from) {
+    this.getData(this.$route.params.id)
+  }
 
-    //     const data = res.data
+  getData (userUUID) {
+    API.user.homeInfo(userUUID).then(res => {
+      if (res.code !== 0) return
 
-    //     if (Reflect.ownKeys(data).length > 0) {
-    //       this.nickname = data.nickname
+      const data = res.data
 
-    //       this.$store.dispatch('setUserUUID', userUUID)
-    //     } else {
-    //       this.nickname = '博客'
-    //     }
-    //   })
-    // }
+      if (Reflect.ownKeys(data).length > 0) {
+        this.res = data
+
+        this.$store.dispatch('setUserUUID', userUUID)
+      } else {
+        // 查找不到用户
+        this.$router.replace({ name: 'NotFoundHome' })
+      }
+    })
   }
 
   // 跳转到分类页面
   goto () {
-    this.$router.push({ name: 'PanelCategory' })
+    this.$router.push({ name: 'PanelCategory', params: { id: this.$store.getters.getUserUUID } })
   }
 }
 

@@ -1,4 +1,4 @@
 // 设置用户userUUID
-export function setUserUUID ({ commit }, id) {
-  commit('setUserUUID', id)
+export function setUserUUID ({ commit }, userUUID) {
+  commit('setUserUUID', userUUID)
 }
