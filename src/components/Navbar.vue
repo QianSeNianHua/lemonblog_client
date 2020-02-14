@@ -51,7 +51,6 @@ class Navbar extends Vue {
 
   mounted () {
     // 获取userUUID
-    console.log(this.$route.params.id)
     this.getUserUUID(this.$route.params.id)
   }
 
@@ -62,7 +61,7 @@ class Navbar extends Vue {
     if (name === 'PanelCategory') {
       return '/category'
     } else if (name === 'PanelCategoryDocs') {
-      return '/docBrief'
+      return '/category'
     } if (name === 'PanelArticle') {
       return '/docBrief'
     } else if (name === 'PanelDocBrief') {
@@ -88,7 +87,7 @@ class Navbar extends Vue {
     ]
   }
 
-  @Watch('$route')
+  @Watch('$route.params.id')
   onRouteChanged (to, from) {
     this.getUserUUID(this.$route.params.id)
   }

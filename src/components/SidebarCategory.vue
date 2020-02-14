@@ -4,14 +4,12 @@
     <div class="sidebar-content__scroll">
       <vue-scroll>
         <ul class="sidebar-content__ul">
-          <li title="文件夹一">文件夹一fdsfdsfdsfdsfsdfds</li>
-          <li>文件夹二</li>
-          <li>文件夹一</li>
-          <li>文件夹二</li>
-          <li>文件夹一</li>
-          <li>文件夹二</li>
-          <li>文件夹一</li>
-          <li>文件夹二</li>
+          <li
+            :title="item.folderName" v-for="item in res.rows" :key="item.folderId"
+            @click="toCategoryDocs(item.folderId)"
+          >
+            {{ item.folderName }}
+          </li>
         </ul>
       </vue-scroll>
     </div>
@@ -22,10 +20,20 @@
 /**
  * 侧边栏的分类
  */
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
-export default {
-  name: 'SidebarCategory'
+@Component()
+class SidebarCategory extends Vue {
+  @Prop({ type: Object, default: {} })
+  res
+
+  // 跳转到指定的文件列表
+  toCategoryDocs (folderId) {
+    this.$router.push({ name: 'PanelCategoryDocs', params: { fid: folderId } })
+  }
 }
+
+export default SidebarCategory
 </script>
 
 <style lang="less" scoped>

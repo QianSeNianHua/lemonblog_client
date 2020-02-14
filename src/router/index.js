@@ -22,6 +22,7 @@ const routes = [
     component: Home
   },
   {
+    // 导航栏
     path: '/u/:id',
     name: 'DocPanel',
     component: DocPanel,
@@ -34,7 +35,8 @@ const routes = [
         component: Category
       },
       {
-        path: 'category/categoryDocs',
+        // 分类文件夹下的文件列表
+        path: 'category/categoryDocs/:fid?',
         name: 'PanelCategoryDocs',
         component: CategoryDocs
       },
@@ -45,6 +47,7 @@ const routes = [
         component: DocBrief
       },
       {
+        // 文章
         path: 'docBrief/article',
         name: 'PanelArticle',
         component: Article

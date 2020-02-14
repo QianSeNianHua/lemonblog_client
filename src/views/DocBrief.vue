@@ -12,7 +12,7 @@
             <article-card :to="{ name: 'PanelArticle' }" />
           </div>
         </div>
-        <div class="content_list" data-year="2018">
+        <div class="content_list" data-year="2019">
           <div class="date">
             <span class="date_title">12月26日</span>
             <span class="date_point"></span>
@@ -51,7 +51,7 @@
 /**
  * 文档
  */
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import ArticleCard from '@/components/ArticleCard'
 
 @Component({
@@ -61,6 +61,10 @@ import ArticleCard from '@/components/ArticleCard'
 })
 class DocBrief extends Vue {
   curYear = '2019' // 当前列表所在时间线——年
+
+  // 数据
+  @Prop({ type: Object, default: {} })
+  res
 
   mounted () {
     let childs = Array.from(this.$refs.artlist.children)

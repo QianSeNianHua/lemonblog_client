@@ -1,9 +1,9 @@
 <template>
-  <div class="folderList" @click="$emit('to')">
+  <div class="folderList">
     <img src="https://www.easyicon.net/api/resizeApi.php?id=1183173&size=128" class="icon">
     <div class="content" :style="{ 'background-color': randomColor() }">
-      <span class="text">Javascript文件夹</span>
-      <span class="num">30篇</span>
+      <span class="text">{{ res.folderName }}</span>
+      <span class="num">{{ res.countFile }}篇</span>
     </div>
   </div>
 </template>
@@ -13,7 +13,7 @@
  * 分类
  * @event to 页面跳转
  */
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import { random } from '@/until/random.js'
 
 const color = [ 'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green' ]
@@ -22,6 +22,10 @@ let count = []
 
 @Component()
 class FolderList extends Vue {
+  // 数据
+  @Prop({ type: Object, default: {} })
+  res
+
   // 随机颜色
   randomColor () {
     if (count.length === 0) {
