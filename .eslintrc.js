@@ -21,7 +21,11 @@ module.exports = {
         }
     }],
     'vue/html-self-closing': 'off',
-    'vue/require-default-prop': 'off'
+    'vue/require-default-prop': 'off',
+    'vue/html-closing-bracket-newline': ['error', {
+      'singleline': 'never',
+      'multiline': 'never'
+    }]
   },
   parserOptions: {
     parser: 'babel-eslint'

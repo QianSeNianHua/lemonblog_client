@@ -3,44 +3,22 @@
     <vue-scroll @handle-scroll="transDate">
       <div class="box" ref="artlist">
         <div class="content_title">{{ curYear }}年</div>
-        <div class="content_list" data-year="2019">
+        <div
+          class="content_list" v-for="(item, i) in listData" :key="'y' + i"
+          :data-year="item.year">
           <div class="date">
-            <span class="date_title">12月27日</span>
+            <span class="date_title">{{ item.month }}月{{ item.date }}日</span>
             <span class="date_point"></span>
           </div>
           <div class="list">
-            <article-card :to="{ name: 'PanelArticle' }" />
-          </div>
-        </div>
-        <div class="content_list" data-year="2019">
-          <div class="date">
-            <span class="date_title">12月26日</span>
-            <span class="date_point"></span>
-          </div>
-          <div class="list">
-            <article-card />
-          </div>
-        </div>
-        <div class="content_list" data-year="2017">
-          <div class="date">
-            <span class="date_title">12月25日</span>
-            <span class="date_point"></span>
-          </div>
-          <div class="list">
-            <article-card />
-            <article-card />
-            <article-card />
-            <article-card />
-            <article-card />
-            <article-card />
-            <article-card />
-            <article-card />
+            <article-card
+              v-for="list in item.list" :key="list.fileUUID" :to="{ name: 'PanelArticle', params: { aid: list.fileUUID } }"
+              :res="list" />
           </div>
         </div>
         <el-pagination
           background layout="prev, pager, next" :total="50"
-          :page-size="10"
-        >
+          :page-size="10">
         </el-pagination>
       </div>
     </vue-scroll>
@@ -51,8 +29,9 @@
 /**
  * 文档
  */
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import ArticleCard from '@/components/ArticleCard'
+import * as API from '@/api'
 
 @Component({
   components: {
@@ -60,15 +39,57 @@ import ArticleCard from '@/components/ArticleCard'
   }
 })
 class DocBrief extends Vue {
-  curYear = '2019' // 当前列表所在时间线——年
+  // 当前列表所在时间线——年
+  curYear = '2019'
+  // 数据，包含全部文档的数据，和分类的文档的数据
+  pdbRes = { rows: [] }
 
-  // 数据
-  @Prop({ type: Object, default: {} })
+  // 分类的文档的数据
+  @Prop({ type: Object, default: () => { return { rows: [] } } })
   res
 
   mounted () {
-    let childs = Array.from(this.$refs.artlist.children)
-    childs.shift()
+    if (this.$route.name === 'PanelCategoryDocs') {
+      // 分类的文档
+      this.pdbRes = this.res
+    } else if (this.$route.name === 'PanelDocBrief') {
+      // 全部文档
+      this.getFileList(this.$route.params.id)
+    }
+  }
+
+  @Watch('$route.params.id')
+  onIdChanged (nV, oV) {
+    // 全部文档
+    this.getFileList(this.$route.params.id)
+  }
+
+  // 分解res的数据，转换成需要的结构
+  get listData () {
+    let data = [] // [{year: '', month: '', date: '', list: []}] 第一层同日，第二层同一天的文章
+    let oldDate = '' // 存储上一个被存放的日期，'20190231'
+
+    this.pdbRes.rows.forEach(year => {
+      year.rows.forEach(month => {
+        month.rows.forEach(item => {
+          item.year = year.year
+          item.month = month.month
+
+          const t = this.getFullDate(item.createTime)
+          const newDate = '' + t.year + (t.month < 10 ? '0' + t.month : t.month) + (t.date < 10 ? '0' + t.date : t.date)
+
+          if (oldDate === newDate) {
+            data[data.length - 1].list.push(item)
+          } else {
+            data.push({ year: '' + t.year, month: '' + (t.month < 10 ? '0' + t.month : t.month), date: '' + (t.date < 10 ? '0' + t.date : t.date), list: [ item ] })
+          }
+        })
+      })
+    })
+
+    this.curYear = this.pdbRes.rows.length > 0 && this.pdbRes.rows[0].year
+
+    return data
   }
 
   // 获取.content_list节点
@@ -79,6 +100,18 @@ class DocBrief extends Vue {
     return lists
   }
 
+  // 根据日期获取年月日
+  getFullDate (str) {
+    let date = new Date(str)
+
+    return {
+      year: date.getUTCFullYear(),
+      month: date.getUTCMonth() + 1,
+      date: date.getUTCDate()
+    }
+  }
+
+  // 滚动到对应日期
   transDate (vertical, horizontal, nativeEvent) {
     let barScrollTop = vertical.scrollTop
 
@@ -98,6 +131,15 @@ class DocBrief extends Vue {
     if (el.length > 0) {
       this.curYear = el[0].getAttribute('data-year')
     }
+  }
+
+  // 接口获取全部文档列表
+  getFileList (userUUID) {
+    API.file.getFileList(userUUID, '', this.page).then(res => {
+      if (res.code !== 0) return
+
+      const data = this.pdbRes = res.data
+    })
   }
 }
 

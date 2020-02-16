@@ -16,4 +16,18 @@ html, body, #app {
   height: 100%;
   overflow: hidden;
 }
+.none_panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5%;
+}
+.none_panel>.i-icon.icon-none {
+  font-size: 300px;
+}
+.none_panel>span {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #999;
+}
 </style>

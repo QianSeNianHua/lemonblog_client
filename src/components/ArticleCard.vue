@@ -1,23 +1,23 @@
 <template>
-  <div class="card articleCard" @click="redirect">
-    <el-image src="https://user-gold-cdn.xitu.io/2019/11/8/16e4a65bafa2c3e5?imageView2/1/w/104/h/144/q/95/format/webp/interlace/1" fit="cover">
+  <div class="card articleCard">
+    <el-image src="https://user-gold-cdn.xitu.io/2019/11/8/16e4a65bafa2c3e5?imageView2/1/w/104/h/144/q/95/format/webp/interlace/1" fit="cover" @click.native="redirect">
       <div slot="error" class="image__error">
         <i class="el-icon-picture-outline"></i>
       </div>
     </el-image>
     <div class="card_body">
-      <h3>vue结合typescript实现代码提示功能</h3>
+      <h3>{{ res.title }}</h3>
       <!-- <div>
         <p>内容第三方时代浮点数防守打法都是分都是</p><p>内的发范德萨范德萨发速度发送到发送的浮点数容</p><p>内容第三方时代浮点数防守打法都是分都是</p><p>内的发范德萨范德萨发速度发送到发送的浮点数容</p>
       </div> -->
     </div>
     <div class="card_foot">
-      <el-tag type="success" title="文件夹">文件夹</el-tag>
+      <el-tag type="success" title="文件夹">{{ res.folderName }}</el-tag>
       <el-tag type="gray" class="view" title="访问量">
-        <span class="view"></span>0
+        <span class="view"></span>{{ res.visit || 0 }}
       </el-tag>
       <el-tag type="gray" class="view" title="评论量">
-        <span class="comment"></span>0
+        <span class="comment"></span>{{ res.countComment }}
       </el-tag>
     </div>
   </div>
@@ -27,52 +27,25 @@
 /**
  * 文章卡片
  */
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
-export default {
-  name: 'ArticleCard',
-  props: {
-    // 图片
-    img: {
-      type: String,
-      default: ''
-    },
-    // 标题
-    title: {
-      type: String,
-      default: ''
-    },
-    // 正文
-    content: {
-      type: String,
-      default: ''
-    },
-    // 文件夹
-    folder: {
-      type: String,
-      default: ''
-    },
-    // 访问量
-    view: {
-      type: Number,
-      default: 0
-    },
-    // 评论量
-    comment: {
-      type: Number,
-      default: 0
-    },
-    // 页面跳转
-    to: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  methods: {
-    redirect () {
-      this.$router.push(this.to)
-    }
+@Component()
+class ArticleCard extends Vue {
+  // 页面跳转
+  @Prop({ type: Object, default: {} })
+  to
+
+  // 数据
+  @Prop({ type: Object, default: {} })
+  res
+
+  redirect () {
+    let route = this.$router.resolve(this.to)
+    window.open(route.href, '_blank')
   }
 }
+
+export default ArticleCard
 </script>
 
 <style lang="less" scoped>

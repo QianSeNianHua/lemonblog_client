@@ -5,8 +5,7 @@
         <template v-if="folderList.length !== 0">
           <folder-list
             @click.native="toCategoryDocs(item.folderId)" v-for="item in folderList" :key="item.folderId"
-            :res="item"
-          />
+            :res="item" />
         </template>
         <template v-else>
           <div class="none_panel">
@@ -41,14 +40,10 @@ class Category extends Vue {
   res = {}
 
   mounted () {
-    const userUUID = this.$store.getters.getUserUUID
-
-    if (userUUID) {
-      this.getData(userUUID)
-    }
+    this.getData(this.$route.params.id)
   }
 
-  @Watch('$store.getters.getUserUUID')
+  @Watch('$route.params.id')
   onUserUUIDChanged (nV, oV) {
     this.getData(nV)
   }
@@ -84,20 +79,5 @@ export default Category
   width: 730px;
   margin: 0px auto 20px;
   padding-top: 20px;
-}
-.none_panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 5%;
-
-  &>.i-icon.icon-none {
-    font-size: 300px;
-  }
-  &>span {
-    margin-top: 20px;
-    font-size: 16px;
-    color: #999;
-  }
 }
 </style>

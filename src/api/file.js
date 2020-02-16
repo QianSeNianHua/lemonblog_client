@@ -9,3 +9,10 @@ export function getFileList (userUUID, folderId = '', page = 1, count = 10) {
     page
   })
 }
+
+// 获取文章内容
+export function getArticle (fileUUID) {
+  return post('file/getArticle', {
+    fileUUID
+  })
+}

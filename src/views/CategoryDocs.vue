@@ -1,7 +1,13 @@
 <template>
   <div class="categoryDocs">
-    <back-page :content="folderName" :to="{ name: 'PanelCategory' }"></back-page>
-    <doc-brief :res="fileRes"></doc-brief>
+    <back-page :content="getFolderName" :to="{ name: 'PanelCategory' }"></back-page>
+    <doc-brief :res="fileRes" v-if="fileRes.rows.length > 0"></doc-brief>
+    <template v-else>
+      <div class="none_panel">
+        <icon-svg icon-class="none" class="i-icon icon-none"></icon-svg>
+        <span>页面空数据</span>
+      </div>
+    </template>
     <div class="sidebar">
       <sidebar-category :res="folderRes"></sidebar-category>
       <button class="sidebar-button">
@@ -33,43 +39,29 @@ class CategoryDocs extends Vue {
   page = 1
 
   // 请求的文件列表数据
-  fileRes = {}
+  fileRes = { rows: [] }
 
   // 请求的分类列表数据
-  folderRes = {}
-
-  // 文件夹名称
-  folderName = ''
+  folderRes = { rows: [] }
 
   mounted () {
-    const userUUID = this.$store.getters.getUserUUID
+    const userUUID = this.$route.params.id
+    const fid = this.$route.params.fid
 
-    if (userUUID) {
-      this.getFileList(userUUID)
-      this.getFolderList(userUUID)
-    }
+    this.getFileList(userUUID, fid)
+    this.getFolderList(userUUID)
   }
 
-  @Watch('$store.getters.getUserUUID')
+  @Watch('$route.params')
   onUserUUIDChanged (nV, oV) {
-    this.getFileList(nV)
-    this.getFolderList(nV)
-  }
-
-  @Watch('$route.params.fid')
-  onFidChanged (nV, oV) {
-    const userUUID = this.$store.getters.getUserUUID
-
-    if (userUUID) {
-      this.getFileList(userUUID)
-      this.getFolderList(userUUID)
-    }
+    this.getFileList(nV.id, nV.fid)
+    this.getFolderList(nV.id)
   }
 
   // 获取当前文件夹名称
   get getFolderName () {
     let t = this.folderRes.rows.filter(item => {
-      return item.folderId === this.$route.params.fid
+      return item.folderId + '' === this.$route.params.fid + ''
     })
 
     if (t.length > 0) {
@@ -80,8 +72,8 @@ class CategoryDocs extends Vue {
   }
 
   // 接口获取文件列表
-  getFileList (userUUID) {
-    API.file.getFileList(userUUID, this.$route.params.fid || '', this.page).then(res => {
+  getFileList (userUUID, fid = '') {
+    API.file.getFileList(userUUID, fid, this.page).then(res => {
       if (res.code !== 0) return
 
       const data = this.fileRes = res.data
@@ -94,15 +86,6 @@ class CategoryDocs extends Vue {
       if (res.code !== 0) return
 
       const data = this.folderRes = res.data
-
-      // 获取文件夹名称
-      data.rows.some(item => {
-        if (item.folderId + '' === this.$route.params.fid + '') {
-          this.folderName = item.folderName
-
-          return true
-        }
-      })
     })
   }
 }

@@ -1,9 +1,9 @@
 <template>
   <div class="article">
     <vue-scroll ref="refVuescroll">
-      <div class="box">
+      <div class="box" v-if="Object.keys(artRes).length !== 0">
         <div class="box-content">
-          <h1 class="header__title">Vue自定义组件中Props中接收数组或对象</h1>
+          <h1 class="header__title">{{ artRes.title }}</h1>
           <div class="header__info">
             <span class="folder">
               <el-image fit="cover" src="https://www.easyicon.net/api/resizeApi.php?id=1183173&size=128">
@@ -11,13 +11,14 @@
                   <i class="el-icon-picture-outline"></i>
                 </div>
               </el-image>
-              <label>文件夹</label>
+              <label>{{ artRes.folderName }}</label>
             </span>
-            <time>2019.01.20 09:07:39</time>
-            <span>访问 164</span>
+            <!-- 2019.01.20 09:07:39 -->
+            <time>{{ createTime }}</time>
+            <span>访问 {{ artRes.visit }}</span>
           </div>
           <article class="content__text">
-            <p> 今天我们来讨论一个历史八卦：武则天先跟李世民过了20年，始终没有怀孕，但是为什么和李治生活1年就有了孩子？这个问题涉及到了古人的私生活，请先允许有书君上柱香拜一拜古人，免得……（BOSS：快干活！）<br></p>
+            <p v-html="artRes.content"></p>
           </article>
         </div>
         <section class="comment-content" id="comment-content">
@@ -37,8 +38,7 @@
           </brief-state>
           <el-pagination
             background layout="prev, pager, next" :total="50"
-            :page-size="10"
-          >
+            :page-size="10">
           </el-pagination>
         </section>
         <comment @to-comment="toComment" ref="refComment"></comment>
@@ -46,6 +46,12 @@
           <el-button icon="el-icon-caret-top" circle></el-button>
         </back-top>
       </div>
+      <template v-else>
+        <div class="none_panel">
+          <icon-svg icon-class="none" class="i-icon icon-none"></icon-svg>
+          <span>页面空数据</span>
+        </div>
+      </template>
     </vue-scroll>
   </div>
 </template>
@@ -54,7 +60,8 @@
 /**
  * 文章页面
  */
-import { Vue, Component, Ref } from 'vue-property-decorator'
+import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
+import * as API from '@/api'
 import Comment from '@/components/Comment'
 import BackTop from '@/components/BackTop'
 import BriefState from '@/components/BriefState/BriefState'
@@ -73,12 +80,12 @@ import BriefStateTwo from '@/components/BriefState/BriefStateTwo'
 class Article extends Vue {
   // 滚动对象
   target = null
-
   // 只看作者
   authorSelected = false
-
   // 时间排序
   dateSelected = false
+  // 文章数据
+  artRes = { }
 
   @Ref()
   refVuescroll
@@ -87,13 +94,30 @@ class Article extends Vue {
   refComment
 
   mounted () {
+    this.getArticleData(this.$route.params.aid)
     this.target = this.refVuescroll
+  }
+
+  @Watch('$route.params')
+  onRouteChanged (nV, oV) {
+    this.getArticleData(nV.aid)
+  }
+
+  // 转换为时间格式
+  get createTime () {
+    let d = new Date(this.artRes.createTime)
+    let month = d.getUTCMonth() + 1 < 10 ? '0' + (d.getUTCMonth() + 1) : d.getUTCMonth() + 1
+    let date = d.getUTCDate() < 10 ? '0' + d.getUTCDate() : d.getUTCDate()
+    let hours = d.getUTCHours() < 10 ? '0' + d.getUTCHours() : d.getUTCHours()
+    let minutes = d.getUTCMinutes() < 10 ? '0' + d.getUTCMinutes() : d.getUTCMinutes()
+
+    return `${d.getUTCFullYear()}-${month}-${date} ${hours}:${minutes}`
   }
 
   authorHandle () {
     this.authorSelected = !this.authorSelected
   }
-  
+
   datetimeHandle () {
     this.dateSelected = !this.dateSelected
   }
@@ -111,6 +135,15 @@ class Article extends Vue {
   // 第二层的评论回复
   replyTwo () {
     this.refComment.initInput('@浅色年华 ')
+  }
+
+  // 获取文章数据
+  getArticleData (fileUUID) {
+    API.file.getArticle(fileUUID).then(res => {
+      if (res.code !== 0) return
+
+      const data = this.artRes = res.data
+    })
   }
 }
 
@@ -178,7 +211,7 @@ export default Article
     letter-spacing: 1px;
     white-space: pre-wrap;
     text-size-adjust: 100%;
-    
+
     & *::selection {
       background-color: #DEEDCB;
     }
@@ -198,7 +231,7 @@ export default Article
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
-    
+
     &>.note__title {
       flex-shrink: 0;
     }

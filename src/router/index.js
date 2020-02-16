@@ -36,7 +36,7 @@ const routes = [
       },
       {
         // 分类文件夹下的文件列表
-        path: 'category/categoryDocs/:fid?',
+        path: 'category/categoryDocs/:fid',
         name: 'PanelCategoryDocs',
         component: CategoryDocs
       },
@@ -48,7 +48,7 @@ const routes = [
       },
       {
         // 文章
-        path: 'docBrief/article',
+        path: 'article/:aid',
         name: 'PanelArticle',
         component: Article
       },
