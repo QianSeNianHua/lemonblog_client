@@ -17,8 +17,8 @@
           </div>
         </div>
         <el-pagination
-          background layout="prev, pager, next" :total="50"
-          :page-size="10">
+          background layout="prev, pager, next" :total="pageInfo.total"
+          :page-size="pageInfo.size" :current-page="pageInfo.current" @current-change="pageChange">
         </el-pagination>
       </div>
     </vue-scroll>
@@ -43,6 +43,12 @@ class DocBrief extends Vue {
   curYear = '2019'
   // 数据，包含全部文档的数据，和分类的文档的数据
   pdbRes = { rows: [] }
+  // 页码
+  pageInfo = {
+    total: 0, // 全部数量
+    size: 10, // 每页数量
+    current: 1 // 当前页码
+  }
 
   // 分类的文档的数据
   @Prop({ type: Object, default: () => { return { rows: [] } } })
@@ -52,9 +58,10 @@ class DocBrief extends Vue {
     if (this.$route.name === 'PanelCategoryDocs') {
       // 分类的文档
       this.pdbRes = this.res
+      this.pageInfo.total = this.res.count
     } else if (this.$route.name === 'PanelDocBrief') {
       // 全部文档
-      this.getFileList(this.$route.params.id)
+      this.getFileList(this.$route.params.id, this.pageInfo.current)
     }
   }
 
@@ -134,12 +141,19 @@ class DocBrief extends Vue {
   }
 
   // 接口获取全部文档列表
-  getFileList (userUUID) {
-    API.file.getFileList(userUUID, '', this.page).then(res => {
+  getFileList (userUUID, current) {
+    API.file.getFileList(userUUID, '', current).then(res => {
       if (res.code !== 0) return
 
       const data = this.pdbRes = res.data
+      this.pageInfo.total = data.count
     })
+  }
+
+  // 页码改变事件
+  pageChange (val) {
+    this.pageInfo.current = val
+    this.getFileList(this.$route.params.id, val)
   }
 }
 

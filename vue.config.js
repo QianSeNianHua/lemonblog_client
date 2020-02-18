@@ -15,5 +15,10 @@ module.exports = {
         symbolId: 'icon-[name]',
         include: ['./src/icons']
       })
-  }
+  },
+  devServer: {
+    port: 7002,
+    disableHostCheck: true
+  },
+  productionSourceMap: false
 }

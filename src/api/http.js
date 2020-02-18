@@ -13,8 +13,8 @@ if (process.env.NODE_ENV === 'development') {
   axios.defaults.baseURL = 'http://127.0.0.1:7001'
 }
 
-axios.defaults.timeout = 3600000
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
+axios.defaults.timeout = 600000
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
 
 /**
  * post请求
@@ -23,7 +23,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
  */
 export function post (url, params) {
   return new Promise((resolve, reject) => {
-    axios.post(url, QS.stringify(params))
+    axios.post(url, JSON.stringify(params))
       .then(res => {
         resolve(res.data)
       })

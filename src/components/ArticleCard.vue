@@ -29,6 +29,8 @@
  */
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
+let winopen = null
+
 @Component()
 class ArticleCard extends Vue {
   // 页面跳转
@@ -39,9 +41,15 @@ class ArticleCard extends Vue {
   @Prop({ type: Object, default: {} })
   res
 
+  // 打开新页面————文章页面
   redirect () {
-    let route = this.$router.resolve(this.to)
-    window.open(route.href, '_blank')
+    const route = this.$router.resolve(this.to)
+
+    if (winopen) {
+      winopen.close()
+    }
+
+    winopen = window.open(route.href, '_blank')
   }
 }
 

@@ -4,19 +4,16 @@
       <div class="panel-input">
         <textarea
           placeholder="写下你的评论..." :readonly="!isFocus" v-model="word"
-          @click="focusHandle" ref="refInput"
-        ></textarea>
+          @click="focusHandle" ref="refInput"></textarea>
         <i
           class="emoji" aita-label="icon: smile" v-show="isFocus"
-          @mousedown.prevent="emojiClick"
-        >
-          <svg 
+          @mousedown.prevent="emojiClick">
+          <svg
             viewBox="64 64 896 896"
             width="1em" height="1em"
             fill="currentColor"
             aria-hidden="true"
-            data-icon="smile"
-          >
+            data-icon="smile">
             <path d="M288 421a48 48 0 1 0 96 0 48 48 0 1 0-96 0zm352 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0zM512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm263 711c-34.2 34.2-74 61-118.3 79.8C611 874.2 562.3 884 512 884c-50.3 0-99-9.8-144.8-29.2A370.4 370.4 0 0 1 248.9 775c-34.2-34.2-61-74-79.8-118.3C149.8 611 140 562.3 140 512s9.8-99 29.2-144.8A370.4 370.4 0 0 1 249 248.9c34.2-34.2 74-61 118.3-79.8C413 149.8 461.7 140 512 140c50.3 0 99 9.8 144.8 29.2A370.4 370.4 0 0 1 775.1 249c34.2 34.2 61 74 79.8 118.3C874.2 413 884 461.7 884 512s-9.8 99-29.2 144.8A368.89 368.89 0 0 1 775 775zM664 533h-48.1c-4.2 0-7.8 3.2-8.1 7.4C604 589.9 562.5 629 512 629s-92.1-39.1-95.8-88.6c-.3-4.2-3.9-7.4-8.1-7.4H360a8 8 0 0 0-8 8.4c4.4 84.3 74.5 151.6 160 151.6s155.6-67.3 160-151.6a8 8 0 0 0-8-8.4z"></path>
           </svg>
         </i>
@@ -27,7 +24,7 @@
       <div class="panel-info" v-show="!isFocus">
         <div class="comment-info" @click="toComment">
           <i class="el-icon-chat-dot-square"></i>
-          <label>评论 15</label>
+          <label>评论 {{ comtotal }}</label>
         </div>
         <el-dropdown placement="bottom" trigger="click" @command="dropdownHandle">
           <button class="dropdown-btn">
@@ -42,8 +39,7 @@
       <div class="panel-btn" v-show="isFocus">
         <el-button
           type="primary" round size="small"
-          :disabled="!word"
-        >
+          :disabled="!word" @click="announceHandle">
           发布
         </el-button>
         <el-button round size="small" @click="cancelHandle">取消</el-button>
@@ -59,7 +55,7 @@
  * @event initInput (被父组件调用)input聚焦并且初始化值
  * @event appendInput (被父组件调用)追加input值
  */
-import { Vue, Component, Ref, Emit } from 'vue-property-decorator'
+import { Vue, Component, Ref, Emit, Prop } from 'vue-property-decorator'
 import FocusPanel from '@/components/FocusPanel/FocusPanel'
 import EmojiStore from '@/components/FocusPanel/EmojiStore'
 
@@ -81,11 +77,21 @@ class Comment extends Vue {
   // 评论内容
   word = ''
 
+  // 评论总量
+  @Prop({ type: Number, default: 0 })
+  comtotal
+
   @Ref()
   refInput
 
+  // 跳转到评论区域
   @Emit()
   toComment () {
+  }
+
+  // 事件发布
+  @Emit()
+  announceHandle () {
   }
 
   @Ref()
@@ -100,7 +106,7 @@ class Comment extends Vue {
     clearTimeout(timeId)
 
     this.animate = true
-    
+
     timeId = setTimeout(() => {
       this.isFocus = true
     }, 500)
@@ -166,7 +172,7 @@ footer.comment {
   box-shadow: 0px -2px 7px 0px rgba(0,0,0,0.1);
   user-select: none;
   transition: all @duration ease;
-  
+
   &>.panel {
     width: 730px;
     height: inherit;

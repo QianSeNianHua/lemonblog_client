@@ -6,8 +6,7 @@
         <ul class="sidebar-content__ul">
           <li
             :title="item.folderName" v-for="item in res.rows" :key="item.folderId"
-            @click="toCategoryDocs(item.folderId)"
-          >
+            @click="toCategoryDocs(item.folderId)">
             {{ item.folderName }}
           </li>
         </ul>

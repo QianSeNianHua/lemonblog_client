@@ -3,16 +3,15 @@
     <div class="info">
       <el-avatar icon="el-icon-user-solid"></el-avatar>
       <div class="userinfo">
-        <span>浅色年华</span>
-        <span>2019.01.31 15:34</span>
+        <span><span class="author">{{ res.userAll ? '作者 ' : '' }}</span>{{ res.nickname }}</span>
+        <span>{{ createTime }}</span>
       </div>
     </div>
     <div class="text">
-      <pre><a>@浅色年华</a>你这标题，泳装就大尺度。。网友也有够傻批的，
-                人家都陪着父亲化疗多久了，人家早就做好面对她父亲离开的准备了，我也相信李咏也希望她能尽早站起来过好自己的人生。要记住，时间不会因为谁死了而停止，地球也只会一直转，就算你亲人离开了你，你周围的人前一秒还在为你伤心，后一秒就欢快的玩耍了。</pre>
+      <pre><a v-show="res.appointCommentId !== null">@{{ res.appointname }}</a>{{ res.content }}</pre>
     </div>
     <div class="feedback">
-      <i class="el-icon-chat-dot-square" @click="$emit('reply')">回复</i>
+      <i class="el-icon-chat-dot-square" @click="reply('@' + res.nickname + ' ')">回复</i>
     </div>
   </li>
 </template>
@@ -20,11 +19,33 @@
 <script>
 /**
  * 评论区 第二层li
+ * @Prop res 评论数据
+ * @event reply 回复评论
  */
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
+import { handleDate } from '@/until/handleDate'
 
-export default {
-  name: 'BriefStateTwo'
+@Component()
+class BriefStateTwo extends Vue {
+  // 数据
+  @Prop({ type: Object, default: {} })
+  res
+
+  // 评论回复
+  @Emit()
+  reply (val) {
+    return val
+  }
+
+  // 处理后的日期
+  get createTime () {
+    const d = handleDate(this.res.createTime)
+
+    return `${d.year}-${d.month}-${d.date} ${d.hourse}:${d.minutes}`
+  }
 }
+
+export default BriefStateTwo
 </script>
 
 <style lang="less" scoped>
@@ -52,6 +73,11 @@ export default {
         font-size: 15px;
         line-height: 20px;
         color: #404040;
+
+        &>.author {
+          font-size: 12px;
+          color:#969696;
+        }
       }
       &>span:nth-child(2) {
         height: 17px;

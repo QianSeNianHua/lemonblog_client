@@ -17,31 +17,46 @@
             <time>{{ createTime }}</time>
             <span>访问 {{ artRes.visit }}</span>
           </div>
+          <!-- 文章 -->
           <article class="content__text">
             <p v-html="artRes.content"></p>
           </article>
         </div>
         <section class="comment-content" id="comment-content">
+          <!-- 评论区头部 -->
           <h3 class="header__title">
             <span class="note__title">全部评论</span>
-            <span class="note__num">15</span>
-            <span :class="{ note__author: true, selected: authorSelected }" @click="authorHandle">只看作者</span>
-            <span class="note__datetime" @click="datetimeHandle">
+            <span class="note__num">{{ comPage.total }}</span>
+            <span :class="{ note__author: true, selected: authorSelected }" @click="authorHandle" :data-disabled="!comPage.total">只看作者</span>
+            <span class="note__datetime" @click="datetimeHandle" :data-disabled="!comPage.total">
               时间排序
-              <i :class="{ 'el-icon-sort-down': dateSelected, 'el-icon-sort-up': !dateSelected }"></i>
+              <i :class="{ 'el-icon-sort-down': !dateSelected, 'el-icon-sort-up': dateSelected }"></i>
             </span>
           </h3>
-          <brief-state>
-            <brief-state-one @reply="replyOne">
-              <brief-state-two @reply="replyTwo"></brief-state-two>
-            </brief-state-one>
-          </brief-state>
-          <el-pagination
-            background layout="prev, pager, next" :total="50"
-            :page-size="10">
-          </el-pagination>
+          <template v-if="comPage.total">
+            <!-- 评论区域 -->
+            <brief-state>
+              <brief-state-one
+                @reply="reply" v-for="(one, i) in comRes.rows" :key="'c' + one.commentId"
+                :res="handleCommentOne(one, { floor: i + 1 + comPage.size * (comPage.current - 1) })">
+                <brief-state-two
+                  @reply="reply" v-for="two in one.child" :key="'c' + two.commentId"
+                  :res="two"></brief-state-two>
+              </brief-state-one>
+            </brief-state>
+            <el-pagination
+              background layout="prev, pager, next" :total="comPage.total"
+              :page-size="comPage.size" :current-page="comPage.current" @current-change="pageChange">
+            </el-pagination>
+          </template>
+          <!-- 评论区空数据 -->
+          <div class="none-comment" v-else>没有评论数据</div>
         </section>
-        <comment @to-comment="toComment" ref="refComment"></comment>
+        <!-- 底部栏——写评论 -->
+        <comment
+          @to-comment="toComment" @announce-handle="announceHandle" ref="refComment"
+          :comtotal="comPage.total"></comment>
+        <!-- 滚动到顶部按钮 -->
         <back-top :target="target">
           <el-button icon="el-icon-caret-top" circle></el-button>
         </back-top>
@@ -83,9 +98,17 @@ class Article extends Vue {
   // 只看作者
   authorSelected = false
   // 时间排序
-  dateSelected = false
+  dateSelected = true
   // 文章数据
-  artRes = { }
+  artRes = {}
+  // 评论数据
+  comRes = { rows: [] }
+  // 评论页码
+  comPage = {
+    total: 0,
+    size: 10,
+    current: 1
+  }
 
   @Ref()
   refVuescroll
@@ -95,12 +118,14 @@ class Article extends Vue {
 
   mounted () {
     this.getArticleData(this.$route.params.aid)
+    this.getCommentData(this.$route.params.aid, this.comPage.current, this.dateSelected)
     this.target = this.refVuescroll
   }
 
   @Watch('$route.params')
   onRouteChanged (nV, oV) {
     this.getArticleData(nV.aid)
+    this.getCommentData(nV.aid, this.comPage.current, this.dateSelected)
   }
 
   // 转换为时间格式
@@ -114,12 +139,30 @@ class Article extends Vue {
     return `${d.getUTCFullYear()}-${month}-${date} ${hours}:${minutes}`
   }
 
+  // 事件,只看作者
   authorHandle () {
+    if (!this.comPage.total) return
+
     this.authorSelected = !this.authorSelected
+    if (this.authorSelected) {
+      // 只看作者
+      this.getAuthorCommentData(this.$route.params.aid, this.dateSelected)
+    } else {
+      this.getCommentData(this.$route.params.aid, this.comPage.current, this.dateSelected)
+    }
   }
 
+  // 事件,时间排序
   datetimeHandle () {
+    if (!this.comPage.total) return
+
     this.dateSelected = !this.dateSelected
+    if (this.authorSelected) {
+      // 只看作者
+      this.getAuthorCommentData(this.$route.params.aid, this.dateSelected)
+    } else {
+      this.getCommentData(this.$route.params.aid, this.comPage.current, this.dateSelected)
+    }
   }
 
   // 滚动到评论区位置
@@ -127,14 +170,14 @@ class Article extends Vue {
     this.refVuescroll.scrollIntoView('#comment-content', 500)
   }
 
-  // 第一层的评论回复
-  replyOne () {
-    this.refComment.initInput('')
+  // 事件发布
+  announceHandle () {
+    this.refComment.cancelHandle()
   }
 
-  // 第二层的评论回复
-  replyTwo () {
-    this.refComment.initInput('@浅色年华 ')
+  // 评论回复
+  reply (val) {
+    this.refComment.initInput(val || '')
   }
 
   // 获取文章数据
@@ -143,6 +186,60 @@ class Article extends Vue {
       if (res.code !== 0) return
 
       const data = this.artRes = res.data
+    })
+  }
+
+  // 获取评论数据
+  getCommentData (fileUUID, current) {
+    API.file.getComment(fileUUID, current, this.dateSelected).then(res => {
+      if (res.code !== 0) return
+
+      const data = this.comRes = res.data
+      this.comPage.total = data.count
+
+      this.appointName(data.rows)
+    })
+  }
+
+  // 只获取作者的评论数据
+  getAuthorCommentData (fileUUID, desc) {
+    API.file.getAuthorComment(fileUUID, desc).then(res => {
+      if (res.code !== 0) return
+
+      const data = this.comRes = res.data
+      this.comPage.total = data.count
+
+      this.appointName(data.rows)
+    })
+  }
+
+  // 页面改变事件
+  pageChange (val) {
+    this.comPage.current = val
+
+    this.getCommentData(this.$route.params.aid, val)
+  }
+
+  // 返回处理后的第一层评论数据
+  handleCommentOne (res, obj) {
+    return {
+      ...res,
+      ...obj
+    }
+  }
+
+  // 处理哪个用户进行评论
+  appointName (data) {
+    data.forEach(one => {
+      one.child.forEach(two => {
+        if (two.appointCommentId === null) return
+
+        one.child.some(item => {
+          if (item.commentId === two.appointCommentId) {
+            two.appointname = item.nickname
+          }
+        })
+      })
     })
   }
 }
@@ -256,6 +353,9 @@ export default Article
       user-select: none;
       flex-shrink: 0;
 
+      &[data-disabled="true"] {
+        cursor: not-allowed;
+      }
       &.selected {
         background-color: #409EFF;
         color: white;
@@ -334,5 +434,9 @@ export default Article
 }
 ul, li {
   list-style: none;
+}
+.none-comment {
+  text-align: center;
+  color: #999;
 }
 </style>
