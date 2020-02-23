@@ -55,7 +55,10 @@ class CategoryDocs extends Vue {
   @Watch('$route.params')
   onUserUUIDChanged (nV, oV) {
     this.getFileList(nV.id, nV.fid)
-    this.getFolderList(nV.id)
+
+    if (nV.id !== oV.id) {
+      this.getFolderList(nV.id)
+    }
   }
 
   // 获取当前文件夹名称

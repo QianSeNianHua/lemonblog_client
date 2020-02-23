@@ -2,8 +2,8 @@
  * 封装axios请求
  */
 
-import axios from 'axios'
 import QS from 'qs'
+import axios from 'axios'
 
 if (process.env.NODE_ENV === 'development') {
   // 开发环境
@@ -15,6 +15,30 @@ if (process.env.NODE_ENV === 'development') {
 
 axios.defaults.timeout = 600000
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
+
+// 请求拦截器
+axios.interceptors.request.use(
+  config => {
+    return config
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+axios.interceptors.response.use(
+  response => {
+    const code = response.data.code
+
+    // if (code !== 0 || code !== 2) {
+
+    // }
+
+    // return response
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
 
 /**
  * post请求

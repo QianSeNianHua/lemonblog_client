@@ -55,11 +55,7 @@ class DocBrief extends Vue {
   res
 
   mounted () {
-    if (this.$route.name === 'PanelCategoryDocs') {
-      // 分类的文档
-      this.pdbRes = this.res
-      this.pageInfo.total = this.res.count
-    } else if (this.$route.name === 'PanelDocBrief') {
+    if (this.$route.name === 'PanelDocBrief') {
       // 全部文档
       this.getFileList(this.$route.params.id, this.pageInfo.current)
     }
@@ -75,6 +71,12 @@ class DocBrief extends Vue {
   get listData () {
     let data = [] // [{year: '', month: '', date: '', list: []}] 第一层同日，第二层同一天的文章
     let oldDate = '' // 存储上一个被存放的日期，'20190231'
+
+    if (this.$route.name === 'PanelCategoryDocs') {
+      // 分类的文档
+      this.pdbRes = this.res
+      this.pageInfo.total = this.res.count
+    }
 
     this.pdbRes.rows.forEach(year => {
       year.rows.forEach(month => {
