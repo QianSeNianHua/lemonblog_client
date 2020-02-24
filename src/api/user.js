@@ -13,3 +13,11 @@ export function userInfo (userUUID) {
     userUUID
   })
 }
+
+// 登录
+export function login (account, password) {
+  return post('user/login', {
+    account,
+    password
+  })
+}

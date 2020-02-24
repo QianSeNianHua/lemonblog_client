@@ -32,6 +32,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import ArticleCard from '@/components/ArticleCard'
 import * as API from '@/api'
+import { handleDate } from '@/until/handleDate'
 
 @Component({
   components: {
@@ -84,13 +85,13 @@ class DocBrief extends Vue {
           item.year = year.year
           item.month = month.month
 
-          const t = this.getFullDate(item.createTime)
-          const newDate = '' + t.year + (t.month < 10 ? '0' + t.month : t.month) + (t.date < 10 ? '0' + t.date : t.date)
+          const t = handleDate(item.createTime)
+          const newDate = `${t.year}${t.month}${t.date}`
 
           if (oldDate === newDate) {
             data[data.length - 1].list.push(item)
           } else {
-            data.push({ year: '' + t.year, month: '' + (t.month < 10 ? '0' + t.month : t.month), date: '' + (t.date < 10 ? '0' + t.date : t.date), list: [ item ] })
+            data.push({ year: t.year, month: t.month, date: t.date, list: [ item ] })
           }
         })
       })
@@ -107,17 +108,6 @@ class DocBrief extends Vue {
     lists.shift()
 
     return lists
-  }
-
-  // 根据日期获取年月日
-  getFullDate (str) {
-    let date = new Date(str)
-
-    return {
-      year: date.getUTCFullYear(),
-      month: date.getUTCMonth() + 1,
-      date: date.getUTCDate()
-    }
   }
 
   // 滚动到对应日期

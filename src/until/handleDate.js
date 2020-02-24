@@ -13,18 +13,18 @@ export function handleDate (res) {
   }
 
   let d = new Date(res)
-  let mo = '' + (d.getUTCMonth() + 1)
-  let da = '' + d.getUTCDate()
-  let ho = '' + d.getUTCHours()
-  let mi = '' + d.getUTCMinutes()
-  let se = '' + d.getUTCSeconds()
-  let ms = '' + d.getUTCMilliseconds()
+  let mo = '' + (d.getMonth() + 1)
+  let da = '' + d.getDate()
+  let ho = '' + d.getHours()
+  let mi = '' + d.getMinutes()
+  let se = '' + d.getSeconds()
+  let ms = '' + d.getMilliseconds()
 
   return {
-    year: d.getUTCFullYear(),
+    year: '' + d.getFullYear(),
     month: addZero(mo, mo.length, 2),
     date: addZero(da, da.length, 2),
-    hourse: addZero(ho, ho.length, 2),
+    hours: addZero(ho, ho.length, 2),
     minutes: addZero(mi, mi.length, 2),
     seconds: addZero(se, se.length, 2),
     milliseconds: addZero(ms, ms.length, 3)

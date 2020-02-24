@@ -41,7 +41,7 @@ class BriefStateTwo extends Vue {
   get createTime () {
     const d = handleDate(this.res.createTime)
 
-    return `${d.year}-${d.month}-${d.date} ${d.hourse}:${d.minutes}`
+    return `${d.year}-${d.month}-${d.date} ${d.hours}:${d.minutes}`
   }
 }
 

@@ -45,6 +45,8 @@ class Home extends Vue {
         // 查找不到用户
         this.$router.replace({ name: 'NotFoundHome' })
       }
+    }).catch(err => {
+      console.log(err.message)
     })
   }
 

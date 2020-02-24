@@ -77,6 +77,7 @@
  */
 import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 import * as API from '@/api'
+import { handleDate } from '@/until/handleDate'
 import Comment from '@/components/Comment'
 import BackTop from '@/components/BackTop'
 import BriefState from '@/components/BriefState/BriefState'
@@ -130,13 +131,9 @@ class Article extends Vue {
 
   // 转换为时间格式
   get createTime () {
-    let d = new Date(this.artRes.createTime)
-    let month = d.getUTCMonth() + 1 < 10 ? '0' + (d.getUTCMonth() + 1) : d.getUTCMonth() + 1
-    let date = d.getUTCDate() < 10 ? '0' + d.getUTCDate() : d.getUTCDate()
-    let hours = d.getUTCHours() < 10 ? '0' + d.getUTCHours() : d.getUTCHours()
-    let minutes = d.getUTCMinutes() < 10 ? '0' + d.getUTCMinutes() : d.getUTCMinutes()
+    let d = handleDate(this.artRes.createTime)
 
-    return `${d.getUTCFullYear()}-${month}-${date} ${hours}:${minutes}`
+    return `${d.year}-${d.month}-${d.date} ${d.hours}:${d.minutes}`
   }
 
   // 事件,只看作者

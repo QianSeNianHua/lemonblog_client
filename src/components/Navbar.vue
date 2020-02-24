@@ -32,6 +32,7 @@
  */
 import { Vue, Component, PropSync, Emit, Ref, Watch } from 'vue-property-decorator'
 import * as API from '@/api'
+import { handleDate } from '@/until/handleDate'
 import FocusPanel from '@/components/FocusPanel/FocusPanel'
 import ContextMenu from '@/components/FocusPanel/ContextMenu'
 
@@ -73,8 +74,8 @@ class Navbar extends Vue {
 
   // 获取菜单
   get menuData () {
-    let createTime = new Date(this.res.createTime)
-    let time = `${createTime.getUTCFullYear()}-${createTime.getUTCMonth() + 1}-${createTime.getUTCDate()}`
+    let createTime = handleDate(new Date(this.res.createTime))
+    let time = `${createTime.year}-${createTime.month}-${createTime.date}`
 
     return [
       { label: this.res.nickname },
@@ -193,12 +194,12 @@ export default Navbar
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  
+
   .el-input {
     border-radius: 20px;
     overflow: hidden;
     margin-right: 20px;
-    
+
     /deep/ input {
       transition-property: width, padding;
       transition-duration: 0.7s;
@@ -223,7 +224,7 @@ export default Navbar
       height: 38px;
       top: 1px;
       right: 1px;
-    }      
+    }
   }
   .btn-search {
     width: 100%;

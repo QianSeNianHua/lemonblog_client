@@ -27,13 +27,7 @@ axios.interceptors.request.use(
 )
 axios.interceptors.response.use(
   response => {
-    const code = response.data.code
-
-    // if (code !== 0 || code !== 2) {
-
-    // }
-
-    // return response
+    return response
   },
   error => {
     return Promise.reject(error)
@@ -52,7 +46,7 @@ export function post (url, params) {
         resolve(res.data)
       })
       .catch(err => {
-        reject(err.data)
+        reject(err)
       })
   })
 }

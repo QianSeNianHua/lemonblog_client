@@ -7,14 +7,12 @@
           <el-form-item class="inputItem">
             <el-autocomplete
               v-model="reqform.account" placeholder="账号" :fetch-suggestions="querySearch"
-              class="inputPanel"
-            ></el-autocomplete>
+              class="inputPanel"></el-autocomplete>
           </el-form-item>
           <el-form-item class="inputItem">
             <el-input
               v-model="reqform.password" placeholder="密码" show-password
-              class="inputPanel"
-            ></el-input>
+              class="inputPanel"></el-input>
           </el-form-item>
           <div class="inputItem check">
             <el-checkbox>7天内自动登录</el-checkbox>
@@ -55,6 +53,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import '@/icons/svg/QQ.svg'
 import '@/icons/svg/wechat.svg'
+import * as API from '@/api'
 
 @Component
 class DialogLogin extends Vue {
@@ -64,6 +63,7 @@ class DialogLogin extends Vue {
   // login登录，more更多登录，regist注册
   type = 'login'
 
+  // 登录信息
   reqform = {
     nickname: '', // 昵称
     account: '', // 账号
@@ -85,6 +85,10 @@ class DialogLogin extends Vue {
 
   // 登录操作
   loginHandle () {
+    API.user.login(this.reqform.account, this.reqform.password).then(res => {
+
+    })
+
     this.$message({
       message: '登录失败',
       type: 'error'
