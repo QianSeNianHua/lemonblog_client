@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import Login from '@/views/Login'
+import Register from '@/views/Register'
 import Home from '@/views/Home'
 import DocPanel from '@/views/DocPanel'
 import Category from '@/views/Category'
@@ -8,7 +10,7 @@ import DocBrief from '@/views/DocBrief'
 import OpenSource from '@/views/OpenSource'
 import CategoryDocs from '@/views/CategoryDocs'
 import Article from '@/views/Article'
-import NotFoundHome from '@/views/NotFoundHome'
+import NotFound from '@/views/NotFound'
 
 import Parent from '@/components/Test/Parent'
 
@@ -16,14 +18,31 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    // 登录
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    // 登录
+    path: '/',
+    redirect: '/login'
+  },
+  {
+    // 注册
+    path: '/register',
+    name: 'Register',
+    component: Register
+  },
+  {
     // 首页
-    path: '/p/:id',
+    path: '/p/:userId',
     name: 'Home',
     component: Home
   },
   {
     // 导航栏
-    path: '/u/:id',
+    path: '/u/:userId',
     name: 'DocPanel',
     component: DocPanel,
     redirect: '/404',
@@ -35,8 +54,8 @@ const routes = [
         component: Category
       },
       {
-        // 分类文件夹下的文件列表
-        path: 'category/categoryDocs/:fid',
+        // 分类文件夹下的文章列表
+        path: 'category/:folderId',
         name: 'PanelCategoryDocs',
         component: CategoryDocs
       },
@@ -48,11 +67,12 @@ const routes = [
       },
       {
         // 文章
-        path: 'article/:aid',
+        path: 'article/:articleId',
         name: 'PanelArticle',
         component: Article
       },
       {
+        // 我的开源
         path: 'openSource',
         name: 'PanelOpenSource',
         component: OpenSource
@@ -65,8 +85,8 @@ const routes = [
   },
   {
     path: '/404',
-    name: 'NotFoundHome',
-    component: NotFoundHome
+    name: 'NotFound',
+    component: NotFound
   },
   {
     path: '*',

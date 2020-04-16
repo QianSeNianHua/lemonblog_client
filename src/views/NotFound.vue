@@ -1,5 +1,5 @@
 <template>
-  <div class="notFoundHome">
+  <div class="notFound">
     <div class="error">
       <span class="nickname">博客</span>
       <el-image :src="require('@/assets/images/404.jpg')">
@@ -18,15 +18,15 @@
 import { Vue, Component } from 'vue-property-decorator'
 
 @Component()
-class NotFoundHome extends Vue {
+class NotFound extends Vue {
 
 }
 
-export default NotFoundHome
+export default NotFound
 </script>
 
 <style lang="less" scoped>
-.notFoundHome {
+.notFound {
   width: 100%;
   height: 100%;
   overflow-y: auto;

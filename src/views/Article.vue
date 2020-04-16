@@ -118,15 +118,15 @@ class Article extends Vue {
   refComment
 
   mounted () {
-    this.getArticleData(this.$route.params.aid)
-    this.getCommentData(this.$route.params.aid, this.comPage.current, this.dateSelected)
+    this.getArticleData(this.$route.params.articleId)
+    this.getCommentData(this.$route.params.articleId, this.comPage.current, this.dateSelected)
     this.target = this.refVuescroll
   }
 
   @Watch('$route.params')
   onRouteChanged (nV, oV) {
-    this.getArticleData(nV.aid)
-    this.getCommentData(nV.aid, this.comPage.current, this.dateSelected)
+    this.getArticleData(nV.articleId)
+    this.getCommentData(nV.articleId, this.comPage.current, this.dateSelected)
   }
 
   // 转换为时间格式
@@ -143,9 +143,9 @@ class Article extends Vue {
     this.authorSelected = !this.authorSelected
     if (this.authorSelected) {
       // 只看作者
-      this.getAuthorCommentData(this.$route.params.aid, this.dateSelected)
+      this.getAuthorCommentData(this.$route.params.articleId, this.dateSelected)
     } else {
-      this.getCommentData(this.$route.params.aid, this.comPage.current, this.dateSelected)
+      this.getCommentData(this.$route.params.articleId, this.comPage.current, this.dateSelected)
     }
   }
 
@@ -156,9 +156,9 @@ class Article extends Vue {
     this.dateSelected = !this.dateSelected
     if (this.authorSelected) {
       // 只看作者
-      this.getAuthorCommentData(this.$route.params.aid, this.dateSelected)
+      this.getAuthorCommentData(this.$route.params.articleId, this.dateSelected)
     } else {
-      this.getCommentData(this.$route.params.aid, this.comPage.current, this.dateSelected)
+      this.getCommentData(this.$route.params.articleId, this.comPage.current, this.dateSelected)
     }
   }
 
@@ -214,7 +214,7 @@ class Article extends Vue {
   pageChange (val) {
     this.comPage.current = val
 
-    this.getCommentData(this.$route.params.aid, val)
+    this.getCommentData(this.$route.params.articleId, val)
   }
 
   // 返回处理后的第一层评论数据

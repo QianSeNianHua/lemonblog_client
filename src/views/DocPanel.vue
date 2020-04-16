@@ -4,7 +4,6 @@
     <div class="panel">
       <router-view />
     </div>
-    <dialog-login ref="refDialogLogin"></dialog-login>
   </div>
 </template>
 
@@ -14,13 +13,11 @@
  */
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import Navbar from '@/components/Navbar'
-import DialogLogin from '@/components/DialogLogin'
 import * as API from '@/api'
 
 @Component({
   components: {
-    Navbar,
-    DialogLogin
+    Navbar
   }
 })
 class DocPanel extends Vue {
@@ -38,8 +35,8 @@ class DocPanel extends Vue {
   // 导航栏的下拉菜单的执行命令
   dropdownCmd (cmd) {
     if (cmd === 'login') {
-      // 登录
-      this.refDialogLogin.visible = true
+      // 登录注册
+      this.$router.push({ name: 'Login' })
     }
   }
 }

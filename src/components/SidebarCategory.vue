@@ -28,7 +28,7 @@ class SidebarCategory extends Vue {
 
   // 跳转到指定的文件列表
   toCategoryDocs (folderId) {
-    this.$router.push({ name: 'PanelCategoryDocs', params: { fid: folderId } })
+    this.$router.push({ name: 'PanelCategoryDocs', params: { folderId: folderId } }).catch(() => {})
   }
 }
 

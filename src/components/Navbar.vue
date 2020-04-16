@@ -4,9 +4,9 @@
       <div class="left_panel">
         <div class="nickname" @click="toHome">博客</div>
         <el-menu mode="horizontal" :default-active="routeIndex" :router="true">
-          <el-menu-item index="/" :route="{ name: 'Home', params: { id: $store.getters.getUserUUID } }">首页</el-menu-item>
-          <el-menu-item index="/category" :route="{ name: 'PanelCategory' }">分类</el-menu-item>
-          <el-menu-item index="/docBrief" :route="{ name: 'PanelDocBrief' }">文档</el-menu-item>
+          <el-menu-item index="/" :route="{ name: 'Home', params: { userId: userUUID } }">首页</el-menu-item>
+          <el-menu-item index="/category" :route="{ name: 'PanelCategory', params: { userId: userUUID } }">分类</el-menu-item>
+          <el-menu-item index="/docBrief" :route="{ name: 'PanelDocBrief', params: { userId: userUUID } }">文档</el-menu-item>
           <el-menu-item index="/openSource">我的开源</el-menu-item>
         </el-menu>
       </div>
@@ -50,11 +50,6 @@ class Navbar extends Vue {
   // 接口数据
   res = {}
 
-  mounted () {
-    // 获取userUUID
-    this.getUserUUID(this.$route.params.id)
-  }
-
   // 获取路由名字，设置当前导航索引
   get routeIndex () {
     const name = this.$route.name
@@ -83,14 +78,19 @@ class Navbar extends Vue {
       { label: '简介' },
       { label: this.res.account },
       { hr: true },
-      { label: '登录', color: '#67c23a', cmd: 'login' },
+      { label: '登录/注册', color: '#67c23a', cmd: 'login' },
       { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
     ]
   }
 
-  @Watch('$route.params.id')
+  // 获取用户id
+  get userUUID () {
+    return this.$store.getters.getUserUUID
+  }
+
+  @Watch('$route.params.userId', { immediate: true })
   onRouteChanged (to, from) {
-    this.getUserUUID(this.$route.params.id)
+    this.getUserUUID(this.$route.params.userId)
   }
 
   // 接口获取用户信息
@@ -104,16 +104,17 @@ class Navbar extends Vue {
         this.res = data
 
         this.$store.dispatch('setUserUUID', userUUID)
+        this.$store.dispatch('setUserInfo', data)
       } else {
         // 查找不到用户
-        this.$router.replace({ name: 'NotFoundHome' })
+        this.$router.replace({ name: 'NotFound' })
       }
     })
   }
 
   // 跳转到首页
   toHome () {
-    this.$router.push({ name: 'Home', params: { id: this.$store.getters.getUserUUID } })
+    this.$router.push({ name: 'Home', params: { id: this.userUUID } })
   }
 
   // 确认搜索

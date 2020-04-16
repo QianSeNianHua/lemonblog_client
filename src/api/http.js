@@ -2,8 +2,9 @@
  * 封装axios请求
  */
 
-import QS from 'qs'
+// import QS from 'qs'
 import axios from 'axios'
+import { Message } from 'element-ui'
 
 if (process.env.NODE_ENV === 'development') {
   // 开发环境
@@ -30,6 +31,18 @@ axios.interceptors.response.use(
     return response
   },
   error => {
+    if (error.message.includes('timeout')) {
+      Message({
+        message: '请求超时，请稍后再试',
+        type: 'warning'
+      })
+    } else {
+      Message({
+        message: '网络连接失败，请稍后再试',
+        type: 'warning'
+      })
+    }
+
     return Promise.reject(error)
   }
 )
@@ -58,12 +71,12 @@ export function post (url, params) {
  */
 export function get (url, params) {
   return new Promise((resolve, reject) => {
-    axios.get(url, {
-      params: params
-    }).then(res => {
-      resolve(res.data)
-    }).catch(err => {
-      reject(err.data)
-    })
+    axios.get(url, { params: params })
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err.data)
+      })
   })
 }

@@ -4,7 +4,7 @@
       <h1 title="进入博客" @click="goto">{{ res.nickname || '博客' }}</h1>
       <p class="desc">前端程序员</p>
       <div class="mess">
-        <p>#你愿做我的账中妖👦👧么#</p>
+        <p>{{ res.briefIntro }}</p>
       </div>
     </section>
   </div>
@@ -23,16 +23,21 @@ class Home extends Vue {
   res = {}
 
   mounted () {
-    this.getData(this.$route.params.id)
+    this.getData(this.$route.params.userId)
   }
 
   @Watch('$route')
   onRouteChanged (to, from) {
-    this.getData(this.$route.params.id)
+    this.getData(this.$route.params.userId)
+  }
+
+  // 获取用户id
+  get userUUID () {
+    return this.$store.getters.getUserUUID
   }
 
   getData (userUUID) {
-    API.user.homeInfo(userUUID).then(res => {
+    API.user.userInfo(userUUID).then(res => {
       if (res.code !== 0) return
 
       const data = res.data
@@ -43,16 +48,14 @@ class Home extends Vue {
         this.$store.dispatch('setUserUUID', userUUID)
       } else {
         // 查找不到用户
-        this.$router.replace({ name: 'NotFoundHome' })
+        this.$router.replace({ name: 'NotFound' })
       }
-    }).catch(err => {
-      console.log(err.message)
     })
   }
 
   // 跳转到分类页面
   goto () {
-    this.$router.push({ name: 'PanelCategory', params: { id: this.$store.getters.getUserUUID } })
+    this.$router.push({ name: 'PanelCategory', params: { id: this.userUUID } })
   }
 }
 
