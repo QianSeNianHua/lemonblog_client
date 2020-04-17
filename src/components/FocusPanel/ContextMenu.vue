@@ -4,8 +4,7 @@
       <template v-for="(one, i) in data">
         <li
           class="menu-item__one" :key="i" :style="{ color: one.color }"
-          v-if="!one.hr" @click="command(one.cmd)"
-        >
+          v-if="!one.hr" @click="command(one.cmd)">
           <span class="leftIcon icon" v-html="one.icon"></span>
           <span class="label">{{ one.label }}</span>
         </li>

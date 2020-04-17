@@ -29,6 +29,7 @@ class Child extends Mixins(MyMixin) {
   syncedPropB
 
   // model
+  // 调用，this.$on('change', '123')
   @Model('change', { type: String })
   word
 

@@ -1,9 +1,8 @@
 <template>
   <div
-    :class="[ 'focusPanel', { show: visible }, classTransform ]" tabindex="0" hidefocus="true"
+    :class="[ 'focusPanel', { show: wholeVisible }, classTransform ]" tabindex="0" hidefocus="true"
     v-show="wholeVisible" ref="refFocusPanel" :style="styleOrigin"
-    @focus="afterFocus" @blur="afterBlur" @contextmenu.prevent="() => {}"
-  >
+    @focus="afterFocus" @blur="afterBlur" @contextmenu.prevent="() => {}">
     <slot></slot>
   </div>
 </template>
@@ -11,14 +10,16 @@
 <script>
 /**
  * 设置一个具有“聚焦”“失焦”的div容器，用于右键菜单，点击弹出菜单等
- * @param props
- * @param visible (被父组件调用)显示隐藏
- * @event focus (被父组件调用)聚焦
- * @event blur (被父组件调用)失焦
- * @event @afterFocus 聚焦后的回调事件
- * @event @afterBlur 失焦后的回调函数
+ * @prop   trans 展开动画的轴心
+ * @prop   x 容器x方向定位
+ * @prop   y 容器y方向定位
+ * @data   visible (被父组件调用)显示隐藏
+ * @method focus 聚焦
+ * @method blur 失焦
+ * @emit   afterFocus 聚焦后的回调事件
+ * @emit   afterBlur 失焦后的回调函数
  */
-import { Vue, Component, Emit, Prop } from 'vue-property-decorator'
+import { Vue, Component, Emit, Prop, PropSync } from 'vue-property-decorator'
 
 let timeId = 0
 
@@ -28,9 +29,17 @@ class FocusPanel extends Vue {
   animateVisible = false // 动画的显示隐藏
   wholeVisible = false // v-show
 
-  // 展开动画的轴心，'': 表示不设置轴心; '$1': $1 (top, bottom, left, right)表示轴心
+  // 展开动画的轴心，'': 表示不设置轴心; '$1': $1  [top, bottom, left, right]表示轴心
   @Prop({ type: String, default: '' })
   trans
+
+  // 容器x定位，单位：xp
+  @Prop({ type: Number, default: 0 })
+  x
+
+  // 容器y定位，单位：xp
+  @Prop({ type: Number, default: 0 })
+  y
 
   // 聚焦后
   @Emit('afterFocus')
@@ -43,6 +52,7 @@ class FocusPanel extends Vue {
   afterBlur () {
     clearTimeout(timeId)
     this.animateVisible = false
+    // this.wholeVisible = false
 
     timeId = setTimeout(() => {
       this.wholeVisible = false
@@ -82,18 +92,18 @@ class FocusPanel extends Vue {
 
   // 手动聚焦
   focus () {
-    if (this.wholeVisible) return
+    // if (this.wholeVisible) return
 
     this.wholeVisible = true
 
     this.$nextTick(() => {
-      this.$refs.refFocusPanel.focus()
+      this.$el.focus()
     })
   }
 
   // 手动失焦
   blur () {
-    this.$refs.refFocusPanel.blur()
+    this.$el.blur()
   }
 }
 

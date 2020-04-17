@@ -126,7 +126,9 @@ class Navbar extends Vue {
   refFocusPanel
 
   // 头像的下拉菜单的显示隐藏
-  dropdownMenu () {
+  dropdownMenu (event) {
+    if (event.which !== 1) return
+
     if (this.refFocusPanel.visible) {
       this.refFocusPanel.blur()
     } else {

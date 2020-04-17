@@ -71,6 +71,7 @@ img.icon {
   top: 0px;
   left: 0px;
   margin: 25px 0px;
+  user-select: none;
 }
 .content {
   height: 100%;
