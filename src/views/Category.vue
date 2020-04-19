@@ -23,7 +23,9 @@
       </div>
     </vue-scroll>
     <dialog-new-folder :visible.sync="nfVisible" />
-    <focus-panel ref="refFocusPanel" trans="top" @afterBlur="afterBlurHandle">
+    <focus-panel
+      ref="refFocusPanel" trans="top" trigger="bilateral"
+      :x="contextPosi.x" :y="contextPosi.y">
       <context-menu :data="contextData"></context-menu>
     </focus-panel>
   </div>
@@ -61,6 +63,11 @@ class Category extends Vue {
   contextData = [
     { label: '删除', color: 'red', cmd: 'delete' }
   ]
+  // 右键菜单的位置
+  contextPosi = {
+    x: 0,
+    y: 0
+  }
 
   @Watch('$route.params.userId', { immediate: true })
   onUserUUIDChanged (nV, oV) {
@@ -94,12 +101,11 @@ class Category extends Vue {
   }
 
   // folderList的右键菜单事件
-  menuHandle (e) {
-    this.refFocusPanel.focus()
-  }
+  menuHandle (event) {
+    this.contextPosi.x = event.clientX || event.pageX || event.x
+    this.contextPosi.y = event.clientY || event.pageY || event.y
 
-  afterBlurHandle () {
-    console.log(123)
+    this.refFocusPanel.focus()
   }
 }
 export default Category
@@ -142,9 +148,9 @@ export default Category
   }
 }
 .focusPanel {
-  position: absolute;
-  top: 55px;
-  right: 20px;
+  // position: absolute;
+  // top: 55px;
+  // right: 20px;
   z-index: 101;
 }
 </style>

@@ -13,6 +13,7 @@
  * @prop   trans 展开动画的轴心
  * @prop   x 容器x方向定位
  * @prop   y 容器y方向定位
+ * @prop   trigger 触发类型
  * @data   visible (被父组件调用)显示隐藏
  * @method focus 聚焦
  * @method blur 失焦
@@ -25,9 +26,10 @@ let timeId = 0
 
 @Component
 class FocusPanel extends Vue {
-  // 显示隐藏
   animateVisible = false // 动画的显示隐藏
   wholeVisible = false // v-show
+  positX = 0
+  positY = 0
 
   // 展开动画的轴心，'': 表示不设置轴心; '$1': $1  [top, bottom, left, right]表示轴心
   @Prop({ type: String, default: '' })
@@ -41,6 +43,10 @@ class FocusPanel extends Vue {
   @Prop({ type: Number, default: 0 })
   y
 
+  // 触发类型，unilateral 表示单边的，点击同一地方只能显示隐藏，bilateral 表示双边的，点击同一地方一直是显示，点其他地方才能隐藏
+  @Prop({ type: String, default: 'unilateral' })
+  trigger
+
   // 聚焦后
   @Emit('afterFocus')
   afterFocus () {
@@ -52,18 +58,25 @@ class FocusPanel extends Vue {
   afterBlur () {
     clearTimeout(timeId)
     this.animateVisible = false
-    // this.wholeVisible = false
 
-    timeId = setTimeout(() => {
+    if (this.trigger === 'unilateral') {
+      // 单边
+      timeId = setTimeout(() => {
+        this.wholeVisible = false
+      }, 320)
+    } else if (this.trigger === 'bilateral') {
+      // 双边
       this.wholeVisible = false
-    }, 320)
+    }
   }
 
   // 获取样式transform-origin
   get styleOrigin () {
     if (!this.trans) return {}
 
-    return { 'transform-origin': this.trans }
+    this.formatX()
+
+    return { 'transform-origin': this.trans, 'left': this.positX, 'top': this.formatY }
   }
 
   // 获取样式transform
@@ -90,9 +103,35 @@ class FocusPanel extends Vue {
     return this.wholeVisible
   }
 
+  // 获取转换后的x轴
+  formatX () {
+    this.$nextTick(() => {
+      try {
+        let elWidth = this.$el.scrollWidth || this.$el.offsetWidth || this.$el.clientWidth
+        let sumWidth = window.innerWidth || document.body.clientWidth
+        let offsetX = this.x + elWidth
+
+        if (offsetX < sumWidth) {
+          this.positX = this.x + 'px'
+        } else {
+          this.positX = this.x - elWidth + 'px'
+        }
+      } catch (error) {
+        this.positX = '0px'
+      }
+    })
+  }
+
+  // 获取转换后的y轴
+  get formatY () {
+    return this.y + 'px'
+  }
+
   // 手动聚焦
   focus () {
-    // if (this.wholeVisible) return
+    if (this.trigger === 'unilateral') {
+      if (this.wholeVisible) return
+    }
 
     this.wholeVisible = true
 
@@ -112,12 +151,17 @@ export default FocusPanel
 
 <style lang="less" scoped>
 .focusPanel {
+  display: inline-block;
   outline: none;
   cursor: default;
   user-select: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
   border-radius: 4px;
-  transition: all 0.3s ease;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  transition-property: transform;
+  position: fixed;
+  z-index: 101;
 
   &.showY {
     transform: scaleY(1)
