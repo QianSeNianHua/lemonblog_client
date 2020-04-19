@@ -10,7 +10,7 @@
         </div>
         <template v-if="res.length !== 0">
           <div v-for="item in res" :key="item.folderId" class="folderPanel">
-            <checkbox v-model="item.checked"></checkbox>
+            <checkbox v-model="item.checked" @change="(checked) => { cbChangeHandle(checked, item) }"></checkbox>
             <folder-list @click.native="toCategoryDocs(item.folderId)" :res="item" @contextmenu.native.prevent="menuHandle" />
           </div>
         </template>
@@ -26,7 +26,7 @@
     <focus-panel
       ref="refFocusPanel" trans="top" trigger="bilateral"
       :x="contextPosi.x" :y="contextPosi.y">
-      <context-menu :data="contextData"></context-menu>
+      <context-menu :data="contextData" @command="dropdownCmd"></context-menu>
     </focus-panel>
   </div>
 </template>
@@ -59,19 +59,38 @@ class Category extends Vue {
   res = []
   // 创建新分类文件夹弹窗的显示隐藏
   nfVisible = false
-  // 右键菜单数据
-  contextData = [
-    { label: '删除', color: 'red', cmd: 'delete' }
-  ]
   // 右键菜单的位置
   contextPosi = {
     x: 0,
     y: 0
   }
+  // 复选框被选中的数据
+  cbCheckedData = { length: 0 }
+  // 右键菜单数据
+  contextData = [
+    { label: '删除', color: 'red', cmd: 'delete', disable: false },
+    { label: '修改', cmd: 'modify', disable: false }
+  ]
 
   @Watch('$route.params.userId', { immediate: true })
   onUserUUIDChanged (nV, oV) {
     this.getData(nV)
+  }
+
+  @Watch('cbCheckedData.length', { immediate: true })
+  onCbCheckedDataChanged (nV, oV) {
+    let del = { label: '删除', color: 'red', cmd: 'delete', disable: true } // 有复选框
+    let mod = { label: '修改', cmd: 'modify', disable: true } // 只能一个复选框
+    let len = this.cbCheckedData.length
+
+    if (len > 0) {
+      del = { label: '删除', color: 'red', cmd: 'delete', disable: false }
+    }
+    if (len === 1) {
+      mod = { label: '修改', cmd: 'modify', disable: false }
+    }
+
+    this.contextData = [del, mod]
   }
 
   @Ref()
@@ -106,6 +125,57 @@ class Category extends Vue {
     this.contextPosi.y = event.clientY || event.pageY || event.y
 
     this.refFocusPanel.focus()
+  }
+
+  // 右键菜单执行命令
+  dropdownCmd (cmd) {
+    this.refFocusPanel.blur()
+
+    switch (cmd) {
+      case 'delete':
+        this.cmdDelete()
+        break
+      case 'modify':
+        this.cmdModify()
+        break
+      default:
+        break
+    }
+  }
+
+  // 删除
+  cmdDelete () {
+    this.$confirm('将删除文件夹里所有的文件，是否继续？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      this.$message({
+        type: 'success',
+        message: '删除成功!'
+      })
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消删除'
+      })
+    })
+  }
+
+  // 修改
+  cmdModify () {
+
+  }
+
+  // 复选框事件
+  cbChangeHandle (checked, item) {
+    if (checked) {
+      this.cbCheckedData[item.folderId] = item
+      this.cbCheckedData.length++
+    } else {
+      Reflect.deleteProperty(this.cbCheckedData, item.folderId)
+      this.cbCheckedData.length--
+    }
   }
 }
 export default Category

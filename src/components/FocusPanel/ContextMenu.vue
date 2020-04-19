@@ -4,7 +4,7 @@
       <template v-for="(one, i) in data">
         <li
           class="menu-item__one" :key="i" :style="{ color: one.color }"
-          v-if="!one.hr" @click="command(one.cmd)">
+          v-if="!one.hr" @click="command(one.cmd, one.disable)" :data-disable="typeof one.disable === 'boolean' ? one.disable : false">
           <span class="leftIcon icon" v-html="one.icon"></span>
           <span class="label">{{ one.label }}</span>
         </li>
@@ -17,8 +17,9 @@
 <script>
 /**
  * 右键菜单
- * @data props
- * @event command 菜单的执行命令
+ * @prop width 容器宽度
+ * @prop data 右键菜单数据
+ * @emit command 菜单的执行命令
  */
 
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
@@ -32,16 +33,17 @@ class ContextMenu extends Vue {
   /**
    * 右键菜单
    * [
-   *   { label: '登录', icon: '<i class="el-icon-delete"></i>', color: 'red', cmd: 'login' },
+   *   { label: '登录', icon: '<i class="el-icon-delete"></i>', color: 'red', cmd: 'login', disable: true },
    *   { hr: true }
    * ]
    */
   @Prop({ type: Array, default: [] })
   data
 
-  @Emit()
-  command (cmd) {
-    return cmd
+  command (cmd, disable) {
+    if (!disable) {
+      this.$emit('command', cmd)
+    }
   }
 }
 
@@ -70,9 +72,14 @@ ul, li {
     line-height: 30px;
     position: relative;
     margin-top: 4px;
-    cursor: pointer;
 
-    &:hover {
+    &:not([data-disable="true"]) {
+      cursor: pointer;
+    }
+    &[data-disable="true"] {
+      cursor: not-allowed;
+    }
+    &:hover:not([data-disable="true"]) {
       background-color: #f2f5fa;
     }
     &>.icon {
@@ -95,6 +102,9 @@ ul, li {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+    }
+    &[data-disable="true"] {
+      color: #aaa !important;
     }
   }
   hr {

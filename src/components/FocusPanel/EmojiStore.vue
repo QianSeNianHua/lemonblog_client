@@ -4,8 +4,7 @@
       <carousel-item v-for="(group, i) in getEmoji" :key="i">
         <ul>
           <li
-            v-for="(item, j) in group" :key="j" @click="command(item)"
-          >
+            v-for="(item, j) in group" :key="j" @click="command(item)">
             {{ item }}
           </li>
         </ul>

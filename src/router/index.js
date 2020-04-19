@@ -11,6 +11,7 @@ import OpenSource from '@/views/OpenSource'
 import CategoryDocs from '@/views/CategoryDocs'
 import Article from '@/views/Article'
 import NotFound from '@/views/NotFound'
+import UserInfo from '@/views/UserInfo'
 
 import Parent from '@/components/Test/Parent'
 
@@ -78,6 +79,12 @@ const routes = [
         component: OpenSource
       }
     ]
+  },
+  {
+    // 个人中心
+    path: '/info/:userId',
+    name: 'UserInfo',
+    component: UserInfo
   },
   {
     path: '/test',

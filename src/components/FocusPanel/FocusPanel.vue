@@ -51,6 +51,8 @@ class FocusPanel extends Vue {
   @Emit('afterFocus')
   afterFocus () {
     this.animateVisible = true
+    this.formatX()
+    this.formatY()
   }
 
   // 失焦后
@@ -74,9 +76,7 @@ class FocusPanel extends Vue {
   get styleOrigin () {
     if (!this.trans) return {}
 
-    this.formatX()
-
-    return { 'transform-origin': this.trans, 'left': this.positX, 'top': this.formatY }
+    return { 'transform-origin': this.trans, 'left': this.positX, 'top': this.positY }
   }
 
   // 获取样式transform
@@ -123,8 +123,22 @@ class FocusPanel extends Vue {
   }
 
   // 获取转换后的y轴
-  get formatY () {
-    return this.y + 'px'
+  formatY () {
+    this.$nextTick(() => {
+      try {
+        let elHeight = this.$el.scrollHeight || this.$el.offsetHeight || this.$el.clientHeight
+        let sumHeight = window.innerHeight || document.body.clientHeight
+        let offsetY = this.y + elHeight
+
+        if (offsetY < sumHeight) {
+          this.positY = this.y + 'px'
+        } else {
+          this.positY = this.y - elHeight + 'px'
+        }
+      } catch (error) {
+        this.positY = '0px'
+      }
+    })
   }
 
   // 手动聚焦

@@ -11,7 +11,7 @@
 /**
  * 多选框
  */
-import { Vue, Component, Prop, Model, PropSync } from 'vue-property-decorator'
+import { Vue, Component, Prop, Model, PropSync, Emit } from 'vue-property-decorator'
 import { v4 as uuidv4 } from 'uuid'
 
 @Component
@@ -32,8 +32,9 @@ class Checkbox extends Vue {
   }
 
   // input change事件
+  @Emit('change')
   changeHandle (event) {
-    this.$emit('change', event.target.checked)
+    return event.target.checked
   }
 }
 

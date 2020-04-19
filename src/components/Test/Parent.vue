@@ -3,8 +3,7 @@
     <input type="text" v-model="word">
     <child
       :prop-a="1" :prop-b.sync="child" v-model="word"
-      v-color="'red'"
-    ></child>
+      v-color="'red'"></child>
   </div>
 </template>
 

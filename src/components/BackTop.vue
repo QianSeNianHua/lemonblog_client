@@ -1,8 +1,7 @@
 <template>
   <div
     :class="{ backTop: true, 'backTop-enter': animate }" v-show="isShow" @click.stop="toTop"
-    :style="{ right: styleRight, bottom: styleBottom }"
-  >
+    :style="{ right: styleRight, bottom: styleBottom }">
     <slot>
       <el-icon></el-icon>
     </slot>
@@ -95,7 +94,7 @@ export default {
         }, 100)
       } else {
         this.animate = false
-        
+
         timeId = setTimeout(() => {
           this.isShow = false
         }, 600)

@@ -37,6 +37,9 @@ class DocPanel extends Vue {
     if (cmd === 'login') {
       // 登录注册
       this.$router.push({ name: 'Login' })
+    } else if (cmd === 'info') {
+      // 个人中心
+      this.$router.push({ name: 'UserInfo', params: { userId: this.$store.getters.getUserUUID } })
     }
   }
 }

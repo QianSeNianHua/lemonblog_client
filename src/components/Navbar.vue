@@ -16,7 +16,8 @@
         </el-input>
         <el-avatar icon="el-icon-user-solid" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" @mousedown.native.prevent="dropdownMenu" />
       </div>
-      <focus-panel ref="refFocusPanel" :trans="'top'">
+      <focus-panel
+        ref="refFocusPanel" :trans="'top'" trigger="unilateral">
         <context-menu width="160px" :data="menuData" @command="dropdownCmd"></context-menu>
       </focus-panel>
     </div>
@@ -74,9 +75,8 @@ class Navbar extends Vue {
 
     return [
       { label: this.res.nickname },
-      { label: time },
-      { label: '简介' },
-      { label: this.res.account },
+      { hr: true },
+      { label: '个人中心', cmd: 'info' },
       { hr: true },
       { label: '登录/注册', color: '#67c23a', cmd: 'login' },
       { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
@@ -245,9 +245,9 @@ export default Navbar
   }
 }
 .focusPanel {
-  position: absolute;
-  top: 55px;
-  right: 20px;
+  top: 55px !important;
+  right: 10px !important;
+  left: initial !important;
   z-index: 101;
 }
 </style>
