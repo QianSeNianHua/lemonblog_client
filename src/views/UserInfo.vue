@@ -23,7 +23,7 @@
         <div class="line-top">个性签名</div>
         <div class="briefIntro">
           <span>你好，这是我的签名</span>
-          <a>修改</a>
+          <a>设置</a>
         </div>
       </div>
       <div class="box">
