@@ -6,12 +6,12 @@
       新建分类文件夹
     </div>
     <el-form :model="form" :rules="rules" ref="refForm">
-      <el-form-item>
-        <el-image :src="form.thumbnailURL">
-          <div slot="error" class="imageSlot" @click="fileClickHandle">
-            <i class="el-icon-picture-outline"></i>
-          </div>
-        </el-image>
+      <el-form-item class="file">
+        <input-file
+          :src="form.thumbnailURL" :value="file" :width="100"
+          :height="100" shape="square">
+          <i class="el-icon-picture-outline"></i>
+        </input-file>
         <input
           type="file" hidden ref="refFile"
           :value="form.thumbnailURL" accept="image/png, image/jpeg, image/jpg, image/gif" @change="fileChangeHandle">
@@ -32,8 +32,13 @@
  * 弹窗，创建分类文件夹
  */
 import { Vue, Component, PropSync, Ref } from 'vue-property-decorator'
+import InputFile from '@/components/InputFile'
 
-@Component
+@Component({
+  components: {
+    InputFile
+  }
+})
 class DialogNewFolder extends Vue {
   // 此组件的显示隐藏
   @PropSync('visible', { type: Boolean, default: false })
@@ -51,6 +56,9 @@ class DialogNewFolder extends Vue {
       { max: 50, message: '长度不超过50个字', trigger: 'blur' }
     ]
   }
+
+  // 上传文件的内容
+  file = ''
 
   @Ref()
   refForm
@@ -113,6 +121,24 @@ export default DialogNewFolder
     padding: 20px 50px 30px;
   }
 }
+.el-form-item.file {
+  /deep/ .el-form-item__content {
+    position: initial;
+    text-align: center;
+    line-height: initial;
+
+    .el-image {
+      background-color: #409EFF;
+      text-align: center;
+      line-height: 110px;
+
+      i::before {
+        font-size: 30px;
+        color: white;
+      }
+    }
+  }
+}
 .el-form-item.is-required.name:not(.is-no-asterisk) {
   /deep/ .el-form-item__content {
     margin-left: 50px;
@@ -120,24 +146,6 @@ export default DialogNewFolder
   /deep/ .el-form-item__label::before {
     content: '';
     width: 0px;
-  }
-}
-.el-image {
-  display: block;
-}
-.el-image /deep/ .imageSlot {
-  width: 100px;
-  height: 100px;
-  background-color: #409EFF;
-  text-align: center;
-  line-height: 110px;
-  border-radius: 5px;
-  margin: 0px auto;
-  cursor: pointer;
-
-  i::before {
-    font-size: 30px;
-    color: white;
   }
 }
 </style>

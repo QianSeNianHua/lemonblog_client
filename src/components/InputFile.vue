@@ -1,6 +1,7 @@
 <template>
   <div class="inputFile">
-    <el-image :src="str" :fit="fit">
+    <el-image
+      :src="src" :fit="fit" :style="style">
       <div slot="error" class="imageSlot" @click="fileClickHandle">
         <slot></slot>
       </div>
@@ -14,9 +15,12 @@
 <script>
 /**
  * 图片上传
- * @prop str 图片正确显示的地址
+ * @prop src 图片正确显示的地址
  * @prop value 文件内容
  * @prop shape 形状
+ * @prop fit 填充类型
+ * @prop width 图片宽度
+ * @prop height 图片高度
  */
 import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
 
@@ -24,7 +28,7 @@ import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
 class InputFile extends Vue {
   // 图片正确显示
   @Prop({ type: String, default: '' })
-  str
+  src
 
   // 文件内容
   @Prop()
@@ -34,12 +38,29 @@ class InputFile extends Vue {
   @Prop({ type: String, default: 'circle' })
   shape
 
-  // 填充类型
-  @Prop({ type: String, default: '' })
+  // 填充类型, fill, contain, cover, none, scale-down
+  @Prop({ type: String, default: 'contain' })
   fit
+
+  // 图片宽度
+  @Prop({ type: Number, default: 50 })
+  width
+
+  // 图片高度
+  @Prop({ type: Number, default: 50 })
+  height
 
   @Ref()
   refFile
+
+  // 样式
+  get style () {
+    return {
+      width: this.width + 'px',
+      height: this.height + 'px',
+      'border-radius': this.shape === 'circle' ? this.width / 2 + 'px' : '5px'
+    }
+  }
 
   // 打开文件选择窗
   fileClickHandle () {
@@ -56,5 +77,17 @@ export default InputFile
 </script>
 
 <style lang="less" scoped>
+.inputFile {
+  display: inline-block;
 
+  &>.el-image {
+    display: block;
+    cursor: pointer;
+
+    /deep/ * {
+      width: inherit;
+      height: inherit;
+    }
+  }
+}
 </style>

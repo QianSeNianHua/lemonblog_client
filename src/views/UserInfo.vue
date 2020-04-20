@@ -6,9 +6,11 @@
           <span>已使用100天</span>
         </div>
         <div class="avatar">
-          <el-avatar src="http://empty">
+          <input-file
+            src="" :value="file" :width="80"
+            :height="80">
             <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-          </el-avatar>
+          </input-file>
         </div>
         <div class="avatar-nickname">许尊桐</div>
         <div class="avatar-account">5522896</div>
@@ -43,10 +45,19 @@
  */
 import { Vue, Component } from 'vue-property-decorator'
 import * as API from '@/api'
+import InputFile from '@/components/InputFile'
+import logo from '@/assets/images/header-bg.jpg'
 
-@Component
+@Component({
+  components: {
+    InputFile
+  }
+})
 class UserInfo extends Vue {
+  // 上传的文件
+  file = ''
 
+  img = logo
 }
 
 export default UserInfo
@@ -86,12 +97,6 @@ export default UserInfo
     padding-top: 16px;
     padding-bottom: 16px;
     text-align: center;
-
-    .el-avatar {
-      width: 80px;
-      height: 80px;
-      cursor: pointer;
-    }
   }
   .avatar-nickname {
     margin: 12px 0px 8px;
