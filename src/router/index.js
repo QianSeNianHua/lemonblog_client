@@ -12,6 +12,7 @@ import CategoryDocs from '@/views/CategoryDocs'
 import Article from '@/views/Article'
 import NotFound from '@/views/NotFound'
 import UserInfo from '@/views/UserInfo'
+import ArticleEditor from '@/views/ArticleEditor'
 
 import Parent from '@/components/Test/Parent'
 
@@ -85,6 +86,12 @@ const routes = [
     path: '/info/:userId',
     name: 'UserInfo',
     component: UserInfo
+  },
+  {
+    // 文章编辑器
+    path: '/editor',
+    name: 'ArticleEditor',
+    component: ArticleEditor
   },
   {
     path: '/test',

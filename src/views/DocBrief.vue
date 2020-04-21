@@ -10,6 +10,9 @@
         <span>页面空数据</span>
       </div>
     </template>
+    <button class="btnCreate" @click="createHandle">
+      <i class="el-icon-plus"></i>
+    </button>
   </div>
 </template>
 
@@ -52,6 +55,13 @@ class DocBrief extends Vue {
   pageChangeHandle (current) {
     this.getFileList(this.$route.params.userId, current)
   }
+
+  // 打开新页面，创建文章
+  createHandle () {
+    const route = this.$router.resolve({ name: 'ArticleEditor' })
+
+    window.open(route.href, '_blank')
+  }
 }
 
 export default DocBrief
@@ -61,6 +71,26 @@ export default DocBrief
 .docBrief {
   width: 100%;
   height: 100%;
+}
+.btnCreate {
+  position: fixed;
+  bottom: 50px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #409EFF;
+  outline: none;
+  border: 0px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 60px;
+  text-align: center;
+  color: white;
+
+  &:hover {
+    box-shadow: -1px 2px 5px 1px rgba(0,0,0,0.25);
+  }
 }
 </style>
 

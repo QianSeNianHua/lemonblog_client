@@ -83,6 +83,7 @@ export default InputFile
   &>.el-image {
     display: block;
     cursor: pointer;
+    text-align: center;
 
     /deep/ * {
       width: inherit;

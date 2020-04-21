@@ -12,20 +12,18 @@
             <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
           </input-file>
         </div>
-        <div class="avatar-nickname">许尊桐</div>
+        <div class="avatar-nickname">{{ nickname }}</div>
         <div class="avatar-account">5522896</div>
       </div>
       <div class="box">
         <div class="nickname">
-          <span>许尊桐</span>
-          <a>修改</a>
+          <nickname-modify :nickname.sync="nickname"></nickname-modify>
         </div>
       </div>
       <div class="box">
-        <div class="line-top">个性签名</div>
+        <div class="line-top">个人简介</div>
         <div class="briefIntro">
-          <span>你好，这是我的签名</span>
-          <a>设置</a>
+          <brief-intro-modify :value.sync="briefIntro"></brief-intro-modify>
         </div>
       </div>
       <div class="box">
@@ -46,18 +44,23 @@
 import { Vue, Component } from 'vue-property-decorator'
 import * as API from '@/api'
 import InputFile from '@/components/InputFile'
-import logo from '@/assets/images/header-bg.jpg'
+import NicknameModify from '@/components/UserInfo/NicknameModify'
+import BriefIntroModify from '@/components/UserInfo/BriefIntroModify'
 
 @Component({
   components: {
-    InputFile
+    InputFile,
+    NicknameModify,
+    BriefIntroModify
   }
 })
 class UserInfo extends Vue {
   // 上传的文件
   file = ''
-
-  img = logo
+  // 用户昵称
+  nickname = '许尊桐'
+  // 个性签名
+  briefIntro = ''
 }
 
 export default UserInfo
@@ -99,6 +102,8 @@ export default UserInfo
     text-align: center;
   }
   .avatar-nickname {
+    height: 20px;
+    line-height: 20px;
     margin: 12px 0px 8px;
     font-size: 18px;
     font-weight: bold;

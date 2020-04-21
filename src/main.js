@@ -7,6 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import vuescroll from 'vuescroll/dist/vuescroll-native' // 滚动条
 import IconSvg from './components/IconSvg' // svg
 import store from './store'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 Vue.config.productionTip = false
 
@@ -38,6 +39,7 @@ Vue.use(vuescroll, {
   name: 'VueScroll'
 })
 Vue.component('icon-svg', IconSvg)
+Vue.use(CKEditor)
 
 new Vue({
   router,
