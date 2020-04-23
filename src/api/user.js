@@ -21,3 +21,8 @@ export function login (account, password) {
     password
   })
 }
+
+// 获取验证码
+export function verify () {
+  return get('user/verify')
+}

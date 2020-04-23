@@ -18,7 +18,7 @@
           <el-form-item class="inputItem vercode" prop="vercode">
             <el-input
               class="inputPanel" v-model="reqform.vercode" placeholder="验证码"></el-input>
-            <img src="">
+            <div class="img" v-html="vercodeData" @click="getVerify"></div>
           </el-form-item>
           <div class="inputItem check">
             <el-checkbox v-model="reqform.state">7天内自动登录</el-checkbox>
@@ -71,6 +71,8 @@ class Login extends Vue {
     vercode: '', // 验证码
     state: false // 七天免登录
   }
+  // 验证码
+  vercodeData = ''
 
   // 校验规则
   rules = {
@@ -83,6 +85,10 @@ class Login extends Vue {
     vercode: [
       { required: true, message: '请输入验证码', trigger: 'blur' }
     ]
+  }
+
+  created () {
+    this.getVerify()
   }
 
   @Ref()
@@ -122,6 +128,13 @@ class Login extends Vue {
   // 跳转到注册页面
   toRegisterHandle () {
     this.$router.replace({ name: 'Register' })
+  }
+
+  // 获取验证码
+  getVerify () {
+    API.user.verify().then(res => {
+      this.vercodeData = res
+    })
   }
 }
 
@@ -190,11 +203,13 @@ export default Login
     height: 44px;
     float: left;
   }
-  img {
+  .img {
+    border: 1px solid #ccc;
     margin-left: 30px;
     width: 100px;
-    height: 44px;
+    height: 40px;
     float: left;
+    cursor: pointer;
   }
 }
 .inputItem.check {
