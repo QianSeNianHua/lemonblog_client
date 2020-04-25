@@ -16,6 +16,8 @@ if (process.env.NODE_ENV === 'development') {
 
 axios.defaults.timeout = 600000
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8'
+// 客户端需要发起一次带有 Credentials 请求头的信息的请求，请求到的cookie才能被浏览器保存
+axios.defaults.withCredentials = true
 
 // 请求拦截器
 axios.interceptors.request.use(
@@ -56,7 +58,7 @@ export function post (url, params) {
   return new Promise((resolve, reject) => {
     axios.post(url, JSON.stringify(params))
       .then(res => {
-        resolve(res.data)
+        resolve(res)
       })
       .catch(err => {
         reject(err)
@@ -73,10 +75,10 @@ export function get (url, params) {
   return new Promise((resolve, reject) => {
     axios.get(url, { params: params })
       .then(res => {
-        resolve(res.data)
+        resolve(res)
       })
       .catch(err => {
-        reject(err.data)
+        reject(err)
       })
   })
 }

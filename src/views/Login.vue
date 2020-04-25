@@ -114,8 +114,13 @@ class Login extends Vue {
     this.refRuleForm.validate(valid => {
       if (!valid) return false
 
-      API.user.login(this.reqform.account, this.reqform.password).then(res => {
-
+      API.user.login({
+        account: this.reqform.account,
+        password: this.reqform.password,
+        verify: this.reqform.vercode,
+        state: this.reqform.state
+      }).then(res => {
+        console.log(res)
       })
     })
 
@@ -133,7 +138,9 @@ class Login extends Vue {
   // 获取验证码
   getVerify () {
     API.user.verify().then(res => {
-      this.vercodeData = res
+      this.vercodeData = res.data
+
+      console.log(res)
     })
   }
 }

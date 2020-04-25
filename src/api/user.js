@@ -15,11 +15,8 @@ export function userInfo (userUUID) {
 }
 
 // 登录
-export function login (account, password) {
-  return post('user/login', {
-    account,
-    password
-  })
+export function login (data) {
+  return post('user/login', data)
 }
 
 // 获取验证码
