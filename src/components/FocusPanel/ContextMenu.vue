@@ -2,13 +2,15 @@
   <div class="contextMenu" :style="{ width }">
     <ul class="menu-main">
       <template v-for="(one, i) in data">
-        <li
-          class="menu-item__one" :key="i" :style="{ color: one.color }"
-          v-if="!one.hr" @click="command(one.cmd, one.disable)" :data-disable="typeof one.disable === 'boolean' ? one.disable : false">
-          <span class="leftIcon icon" v-html="one.icon"></span>
-          <span class="label">{{ one.label }}</span>
-        </li>
-        <hr :key="i" v-else>
+        <template v-if="one">
+          <li
+            class="menu-item__one" :key="i" :style="{ color: one.color }"
+            v-if="!one.hr" @click="command(one.cmd, one.disable)" :data-disable="typeof one.disable === 'boolean' ? one.disable : false">
+            <span class="leftIcon icon" v-html="one.icon"></span>
+            <span class="label">{{ one.label }}</span>
+          </li>
+          <hr :key="i" v-else>
+        </template>
       </template>
     </ul>
   </div>

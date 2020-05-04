@@ -26,7 +26,7 @@ const routes = [
     component: Login
   },
   {
-    // 登录
+    // 博客首页
     path: '/',
     redirect: '/login'
   },
@@ -37,7 +37,7 @@ const routes = [
     component: Register
   },
   {
-    // 首页
+    // 个人首页
     path: '/p/:userId',
     name: 'Home',
     component: Home

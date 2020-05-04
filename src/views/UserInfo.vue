@@ -12,18 +12,18 @@
             <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
           </input-file>
         </div>
-        <div class="avatar-nickname">{{ nickname }}</div>
+        <div class="avatar-nickname">{{ getUserInfo.nickname }}</div>
         <div class="avatar-account">5522896</div>
       </div>
       <div class="box">
         <div class="nickname">
-          <nickname-modify :nickname.sync="nickname"></nickname-modify>
+          <nickname-modify :nickname.sync="getUserInfo.nickname" @confirm="nameConfirmHandle"></nickname-modify>
         </div>
       </div>
       <div class="box">
         <div class="line-top">个人简介</div>
         <div class="briefIntro">
-          <brief-intro-modify :value.sync="briefIntro"></brief-intro-modify>
+          <brief-intro-modify :value.sync="getUserInfo.briefIntro" @confirm="introConfirmHandle"></brief-intro-modify>
         </div>
       </div>
       <div class="box">
@@ -42,6 +42,7 @@
  * 个人中心
  */
 import { Vue, Component } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 import * as API from '@/api'
 import InputFile from '@/components/InputFile'
 import NicknameModify from '@/components/UserInfo/NicknameModify'
@@ -61,6 +62,26 @@ class UserInfo extends Vue {
   nickname = '许尊桐'
   // 个性签名
   briefIntro = ''
+
+  @Getter
+  getUserInfo
+
+  // 修改昵称
+  nameConfirmHandle (val) {
+    this.apiModifyUserInfo(val, this.getUserInfo.briefIntro)
+  }
+
+  // 修改个人简介
+  introConfirmHandle (val) {
+    this.apiModifyUserInfo(this.getUserInfo.nickname, val)
+  }
+
+  // api，修改昵称和个人简介
+  apiModifyUserInfo (nickname, briefIntro) {
+    API.user.modifyUserInfo(nickname, briefIntro).then(res => {
+      this.$message.success('修改成功')
+    })
+  }
 }
 
 export default UserInfo

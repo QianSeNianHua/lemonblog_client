@@ -1,10 +1,10 @@
 <template>
   <div class="box">
     <section>
-      <h1 title="进入博客" @click="goto">{{ res.nickname || '博客' }}</h1>
+      <h1 title="进入博客" @click="goto">{{ getUserInfo.nickname || '博客' }}</h1>
       <p class="desc">前端程序员</p>
       <div class="mess">
-        <p>{{ res.briefIntro }}</p>
+        <p>{{ getUserInfo.briefIntro }}</p>
       </div>
     </section>
   </div>
@@ -16,25 +16,31 @@
  */
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import * as API from '@/api'
+import { Getter } from 'vuex-class'
 
-@Component()
+@Component
 class Home extends Vue {
   // 接口数据
   res = {}
 
-  mounted () {
-    this.getData(this.$route.params.userId)
-  }
-
-  @Watch('$route')
+  @Watch('$route', { immediate: true })
   onRouteChanged (to, from) {
-    this.getData(this.$route.params.userId)
+    if (!this.getIsLogin) {
+      // 普通用户状态
+      this.getData(this.$route.params.userId)
+    }
   }
 
   // 获取用户id
   get userUUID () {
     return this.$store.getters.getUserUUID
   }
+
+  @Getter
+  getIsLogin
+
+  @Getter
+  getUserInfo
 
   getData (userUUID) {
     API.user.userInfo(userUUID).then(res => {
