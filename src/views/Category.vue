@@ -2,7 +2,7 @@
   <div class="category">
     <vue-scroll>
       <div class="box">
-        <div class="create">
+        <div class="create" v-if="getIsLogin">
           <span @click="createFolderHandle">
             <i class="el-icon-plus"></i>
             创建一个新的分类文件夹
@@ -36,6 +36,7 @@
  * 分类页面
  */
 import { Vue, Component, Watch, Ref } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 import * as API from '@/api'
 import FolderList from '@/components/FolderList'
 import DialogNewFolder from '@/components/Dialog/DialogNewFolder'
@@ -95,6 +96,9 @@ class Category extends Vue {
 
   @Ref()
   refFocusPanel
+
+  @Getter
+  getIsLogin
 
   // 接口获取分类列表
   getData (userUUID) {

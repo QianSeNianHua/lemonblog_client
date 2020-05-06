@@ -58,6 +58,7 @@ import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 import '@/icons/svg/QQ.svg'
 import '@/icons/svg/wechat.svg'
 import * as API from '@/api'
+import { Action, Getter } from 'vuex-class'
 
 @Component
 class Login extends Vue {
@@ -87,17 +88,43 @@ class Login extends Vue {
     ]
   }
 
-  created () {
+  async created () {
+    // 判断是否已登录
+    if (this.getToken) {
+      await this.apiUserInfo()
+
+      if (this.getIsLogin) {
+        // 已登录，跳转到首页
+        this.$router.push({ name: 'Home', params: { userId: this.getUserInfo.userUUID } })
+
+        return
+      }
+    }
+
+    // 获取验证码
     this.getVerify()
   }
 
   @Ref()
   refRuleForm
 
-  @Watch('reqform.account')
-  onAccountHandle (val, oldVal) {
-    console.log(this)
-  }
+  @Action
+  setToken
+
+  @Action
+  setUserInfoStorage
+
+  @Action
+  setIsLogin
+
+  @Getter
+  getUserInfo
+
+  @Getter
+  getIsLogin
+
+  @Getter
+  getToken
 
   // 账号输入建议
   querySearch (str, cb) {
@@ -115,24 +142,24 @@ class Login extends Vue {
   }
 
   // 登录操作
-  submitHandle () {
-    this.refRuleForm.validate(valid => {
-      if (!valid) return false
-
-      API.user.login({
-        account: this.reqform.account,
-        password: this.reqform.password,
-        verify: this.reqform.vercode,
-        state: this.reqform.state
-      }).then(res => {
-        console.log(res)
+  async submitHandle () {
+    function validate () {
+      return new Promise((resolve, reject) => {
+        this.refRuleForm.validate(valid => {
+          if (!valid) {
+            return false
+          } else {
+            resolve()
+          }
+        })
       })
-    })
+    }
 
-    this.$message({
-      message: '登录失败',
-      type: 'error'
-    })
+    await validate.call(this)
+    await this.apiUserLogin()
+    await this.apiUserInfo()
+
+    this.$router.push({ name: 'Home', params: { userId: this.getUserInfo.userUUID } })
   }
 
   // 跳转到注册页面
@@ -143,9 +170,50 @@ class Login extends Vue {
   // 获取验证码
   getVerify () {
     API.user.verify().then(res => {
-      this.vercodeData = res.data
+      this.vercodeData = res.data.text
+    })
+  }
 
-      console.log(res)
+  // 登录
+  apiUserLogin () {
+    return new Promise((resolve, reject) => {
+      API.user.login({
+        account: this.reqform.account,
+        password: this.reqform.password,
+        verify: this.reqform.vercode,
+        state: this.reqform.state
+      }).then(res => {
+        if (res.code === 0) {
+          // 登录成功
+          this.$message.success('登录成功')
+
+          // 获取token
+          const data = res.data
+          this.setToken(data.token)
+
+          resolve()
+        } else {
+          // 登录失败
+          this.$message.warning(res.msg)
+
+          this.getVerify()
+          this.reqform.vercode = ''
+        }
+      })
+    })
+  }
+
+  // 获取用户信息
+  apiUserInfo () {
+    return new Promise((resolve, reject) => {
+      API.user.inUserInfo().then(res => {
+        if (res.code === 0) {
+          this.setUserInfoStorage(res.data)
+          this.setIsLogin(true)
+
+          resolve()
+        }
+      })
     })
   }
 }

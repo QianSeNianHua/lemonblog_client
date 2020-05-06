@@ -4,9 +4,9 @@
       <div class="left_panel">
         <div class="nickname" @click="toHome">博客</div>
         <el-menu mode="horizontal" :default-active="routeIndex" :router="true">
-          <el-menu-item index="/" :route="{ name: 'Home', params: { userId: userUUID } }">首页</el-menu-item>
-          <el-menu-item index="/category" :route="{ name: 'PanelCategory', params: { userId: userUUID } }">分类</el-menu-item>
-          <el-menu-item index="/docBrief" :route="{ name: 'PanelDocBrief', params: { userId: userUUID } }">文档</el-menu-item>
+          <el-menu-item index="/" :route="{ name: 'Home', params: { userId: getUserInfo.userUUID } }">首页</el-menu-item>
+          <el-menu-item index="/category" :route="{ name: 'PanelCategory', params: { userId: getUserInfo.userUUID } }">分类</el-menu-item>
+          <el-menu-item index="/docBrief" :route="{ name: 'PanelDocBrief', params: { userId: getUserInfo.userUUID } }">文档</el-menu-item>
           <el-menu-item index="/openSource">我的开源</el-menu-item>
         </el-menu>
       </div>
@@ -33,6 +33,7 @@
  */
 import { Vue, Component, PropSync, Emit, Ref, Watch } from 'vue-property-decorator'
 import * as API from '@/api'
+import { Getter } from 'vuex-class'
 import { handleDate } from '@/until/handleDate'
 import FocusPanel from '@/components/FocusPanel/FocusPanel'
 import ContextMenu from '@/components/FocusPanel/ContextMenu'
@@ -78,15 +79,16 @@ class Navbar extends Vue {
       { hr: true },
       { label: '个人中心', cmd: 'info' },
       { hr: true },
-      { label: '登录/注册', color: '#67c23a', cmd: 'login' },
+      this.getIsLogin ? undefined : { label: '登录/注册', color: '#67c23a', cmd: 'login' },
       { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
     ]
   }
 
-  // 获取用户id
-  get userUUID () {
-    return this.$store.getters.getUserUUID
-  }
+  @Getter
+  getIsLogin
+
+  @Getter
+  getUserInfo
 
   @Watch('$route.params.userId', { immediate: true })
   onRouteChanged (to, from) {
@@ -114,7 +116,7 @@ class Navbar extends Vue {
 
   // 跳转到首页
   toHome () {
-    this.$router.push({ name: 'Home', params: { id: this.userUUID } })
+    this.$router.push({ name: 'Home', params: { id: this.getUserInfo.userUUID } })
   }
 
   // 确认搜索
@@ -139,11 +141,9 @@ class Navbar extends Vue {
   // 头像的下拉菜单的执行命令
   @Emit('dropdownCmd')
   dropdownCmd (cmd) {
-    if (cmd) {
-      this.refFocusPanel.blur()
+    if (!cmd) return
 
-      return cmd
-    }
+    this.refFocusPanel.blur()
   }
 }
 

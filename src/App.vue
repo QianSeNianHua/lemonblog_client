@@ -4,6 +4,55 @@
   </div>
 </template>
 
+<script>
+import { Vue, Component, Ref } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import * as API from '@/api'
+
+@Component
+class App extends Vue {
+  async created () {
+    const token = window.localStorage.getItem('token')
+    const routeName = this.$route.name
+
+    this.setToken(token)
+
+    if (routeName === 'Login') return
+
+    this.apiUserInfo()
+  }
+
+  @Action
+  setToken
+
+  @Action
+  setIsLogin
+
+  @Action
+  setUserInfoStorage
+
+  @Getter
+  getIsLogin
+
+  @Getter
+  getUserInfo
+
+  // 获取用户信息
+  apiUserInfo () {
+    API.user.inUserInfo().then(res => {
+      if (res.code === 0) {
+        this.setUserInfoStorage(res.data)
+        this.setIsLogin(true)
+      }
+    }).catch(_error => {
+      this.setIsLogin(false)
+    })
+  }
+}
+
+export default App
+</script>
+
 <style>
 html, body, #app, * {
   margin: 0;
