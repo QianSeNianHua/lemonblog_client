@@ -54,7 +54,7 @@
 /**
  * 登录页面
  */
-import { Vue, Component, Ref } from 'vue-property-decorator'
+import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 import '@/icons/svg/QQ.svg'
 import '@/icons/svg/wechat.svg'
 import * as API from '@/api'
@@ -93,6 +93,11 @@ class Login extends Vue {
 
   @Ref()
   refRuleForm
+
+  @Watch('reqform.account')
+  onAccountHandle (val, oldVal) {
+    console.log(this)
+  }
 
   // 账号输入建议
   querySearch (str, cb) {
