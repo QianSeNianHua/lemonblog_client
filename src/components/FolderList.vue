@@ -1,6 +1,6 @@
 <template>
   <div class="folderList">
-    <img src="https://www.easyicon.net/api/resizeApi.php?id=1183173&size=128" class="icon">
+    <img :src="res.thumbnailURL" class="icon">
     <div class="content" :style="{ 'background-color': randomColor() }">
       <span class="text">{{ res.folderName }}</span>
       <span class="num">{{ res.countFile }}篇</span>
