@@ -1,7 +1,5 @@
 # webblog
-搭建个人博客123
-debbug1
-debbug2
+搭建个人博客
 
 ## Project setup
 ```
