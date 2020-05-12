@@ -11,10 +11,17 @@ import * as API from '@/api'
 
 @Component
 class App extends Vue {
-  async created () {
+  created () {
     const token = window.localStorage.getItem('token')
     const routeName = this.$route.name
 
+    if (!token) {
+      this.setToken('')
+      this.setUserInfo({})
+      this.setIsLogin(false)
+
+      return
+    }
     this.setToken(token)
 
     if (routeName === 'Login') return
@@ -29,22 +36,21 @@ class App extends Vue {
   setIsLogin
 
   @Action
-  setUserInfoStorage
+  setUserInfo
 
   @Getter
   getIsLogin
 
-  @Getter
-  getUserInfo
-
   // 获取用户信息
-  apiUserInfo () {
+  apiUserInfo (token) {
     API.user.inUserInfo().then(res => {
       if (res.code === 0) {
-        this.setUserInfoStorage(res.data)
+        this.setUserInfo(res.data)
         this.setIsLogin(true)
       }
     }).catch(_error => {
+      this.setToken('')
+      this.setUserInfo({})
       this.setIsLogin(false)
     })
   }

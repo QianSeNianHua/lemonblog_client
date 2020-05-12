@@ -88,17 +88,20 @@ class Login extends Vue {
     ]
   }
 
+  data () {
+    this.events = this.$eventBus()
+
+    return {}
+  }
+
   async created () {
-    // 判断是否已登录
     if (this.getToken) {
       await this.apiUserInfo()
+    }
 
-      if (this.getIsLogin) {
-        // 已登录，跳转到首页
-        this.$router.push({ name: 'Home', params: { userId: this.getUserInfo.userUUID } })
-
-        return
-      }
+    if (this.getIsLogin) {
+      // 已登录，跳转到首页
+      this.$router.push({ name: 'Home', params: { userId: this.getUserInfo.userUUID } })
     }
 
     // 获取验证码
@@ -112,7 +115,7 @@ class Login extends Vue {
   setToken
 
   @Action
-  setUserInfoStorage
+  setUserInfo
 
   @Action
   setIsLogin
@@ -191,6 +194,17 @@ class Login extends Vue {
           const data = res.data
           this.setToken(data.token)
 
+          // 账号建议
+          let accounts = JSON.parse(window.localStorage.getItem('accounts') || '[]')
+          let flag = accounts.some((item, i) => {
+            return item.value === this.reqform.account
+          })
+
+          if (!flag) {
+            accounts.push({ value: this.reqform.account })
+            window.localStorage.setItem('accounts', JSON.stringify(accounts))
+          }
+
           resolve()
         } else {
           // 登录失败
@@ -208,11 +222,14 @@ class Login extends Vue {
     return new Promise((resolve, reject) => {
       API.user.inUserInfo().then(res => {
         if (res.code === 0) {
-          this.setUserInfoStorage(res.data)
+          this.setUserInfo(res.data)
           this.setIsLogin(true)
-
-          resolve()
         }
+      }).catch(_err => {
+        this.setUserInfo({})
+        this.setIsLogin(false)
+      }).finally(() => {
+        resolve()
       })
     })
   }
