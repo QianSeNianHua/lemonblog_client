@@ -8,6 +8,7 @@ import vuescroll from 'vuescroll/dist/vuescroll-native' // 滚动条
 import IconSvg from './components/IconSvg' // svg
 import store from './store'
 import CKEditor from '@ckeditor/ckeditor5-vue'
+import EventBus from '@/until/eventBus'
 
 Vue.config.productionTip = false
 
@@ -40,6 +41,8 @@ Vue.use(vuescroll, {
 })
 Vue.component('icon-svg', IconSvg)
 Vue.use(CKEditor)
+// 全局事件
+Vue.prototype.$eventBus = EventBus
 
 new Vue({
   router,
