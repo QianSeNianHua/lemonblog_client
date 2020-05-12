@@ -71,13 +71,13 @@ class Navbar extends Vue {
 
   // 获取菜单
   get menuData () {
-    let createTime = handleDate(new Date(this.res.createTime))
+    let createTime = handleDate(new Date(this.getUserInfo.createTime))
     let time = `${createTime.year}-${createTime.month}-${createTime.date}`
 
     return [
-      { label: this.res.nickname },
-      { hr: true },
-      { label: '个人中心', cmd: 'info' },
+      { label: this.getUserInfo.nickname },
+      this.getIsLogin ? { hr: true } : undefined,
+      this.getIsLogin ? { label: '个人中心', cmd: 'info' } : undefined,
       { hr: true },
       this.getIsLogin ? undefined : { label: '登录/注册', color: '#67c23a', cmd: 'login' },
       { label: '退出账号', color: '#f56c6c', cmd: 'logout' }
@@ -89,30 +89,6 @@ class Navbar extends Vue {
 
   @Getter
   getUserInfo
-
-  @Watch('$route.params.userId', { immediate: true })
-  onRouteChanged (to, from) {
-    this.getUserUUID(this.$route.params.userId)
-  }
-
-  // 接口获取用户信息
-  getUserUUID (userUUID) {
-    API.user.userInfo(userUUID).then(res => {
-      if (res.code !== 0) return
-
-      const data = res.data
-
-      if (Reflect.ownKeys(data).length > 0) {
-        this.res = data
-
-        this.$store.dispatch('setUserUUID', userUUID)
-        this.$store.dispatch('setUserInfo', data)
-      } else {
-        // 查找不到用户
-        this.$router.replace({ name: 'NotFound' })
-      }
-    })
-  }
 
   // 跳转到首页
   toHome () {

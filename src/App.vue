@@ -5,28 +5,29 @@
 </template>
 
 <script>
-import { Vue, Component, Ref } from 'vue-property-decorator'
+import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import * as API from '@/api'
 
+const nonePage = ['Login']
+
 @Component
 class App extends Vue {
-  created () {
+  async created () {
     const token = window.localStorage.getItem('token')
     const routeName = this.$route.name
+    const userUUID = this.$route.params.userId
 
-    if (!token) {
-      this.setToken('')
-      this.setUserInfo({})
-      this.setIsLogin(false)
+    token ? this.setToken(token) : this.setToken('')
 
-      return
+    // 地址参数不包含userId
+    if (nonePage.indexOf(routeName) !== -1) return
+
+    if (token) await this.apiUserInfoIn()
+
+    if (userUUID) {
+      await this.apiUserInfo(userUUID)
     }
-    this.setToken(token)
-
-    if (routeName === 'Login') return
-
-    this.apiUserInfo()
   }
 
   @Action
@@ -41,17 +42,44 @@ class App extends Vue {
   @Getter
   getIsLogin
 
-  // 获取用户信息
-  apiUserInfo (token) {
-    API.user.inUserInfo().then(res => {
-      if (res.code === 0) {
+  @Getter
+  getUserInfo
+
+  @Watch('$route.params.userId')
+  onUserIdChanged (nV, oV) {
+    if (this.getIsLogin && nV !== undefined && nV !== this.getUserInfo.userUUID) {
+      // 不允许查看普通用户
+      this.$router.push({ name: 'NotFound' })
+    } else if (nV !== undefined) {
+      this.apiUserInfo(nV)
+    }
+  }
+
+  // 获取登录用户信息
+  apiUserInfoIn () {
+    return new Promise((resolve, reject) => {
+      API.user.inUserInfo().then(res => {
         this.setUserInfo(res.data)
         this.setIsLogin(true)
-      }
-    }).catch(_error => {
-      this.setToken('')
-      this.setUserInfo({})
-      this.setIsLogin(false)
+      }).catch(_error => {
+        this.setToken('')
+        this.setIsLogin(false)
+
+        resolve()
+      })
+    })
+  }
+
+  // 获取普通用户信息
+  apiUserInfo (userUUID) {
+    return new Promise((resolve, reject) => {
+      API.user.userInfo(userUUID).then(res => {
+        const data = res.data
+
+        this.setUserInfo(res.data)
+
+        if (Object.keys(data).length === 0) this.$router.push({ name: 'NotFound' })
+      })
     })
   }
 }

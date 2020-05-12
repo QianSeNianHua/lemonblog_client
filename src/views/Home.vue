@@ -20,48 +20,12 @@ import { Getter } from 'vuex-class'
 
 @Component
 class Home extends Vue {
-  // 接口数据
-  res = {}
-
-  @Watch('$route', { immediate: true })
-  onRouteChanged (to, from) {
-    if (!this.getIsLogin) {
-      // 普通用户状态
-      this.getData(this.$route.params.userId)
-    }
-  }
-
-  // 获取用户id
-  get userUUID () {
-    return this.$store.getters.getUserUUID
-  }
-
-  @Getter
-  getIsLogin
-
   @Getter
   getUserInfo
 
-  getData (userUUID) {
-    API.user.userInfo(userUUID).then(res => {
-      if (res.code !== 0) return
-
-      const data = res.data
-
-      if (Reflect.ownKeys(data).length > 0) {
-        this.res = data
-
-        this.$store.dispatch('setUserUUID', userUUID)
-      } else {
-        // 查找不到用户
-        this.$router.replace({ name: 'NotFound' })
-      }
-    })
-  }
-
   // 跳转到分类页面
   goto () {
-    this.$router.push({ name: 'PanelCategory', params: { id: this.userUUID } })
+    this.$router.push({ name: 'PanelCategory', params: { id: this.getUserInfo.userUUID } })
   }
 }
 
