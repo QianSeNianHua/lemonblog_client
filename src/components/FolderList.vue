@@ -1,6 +1,11 @@
 <template>
   <div class="folderList">
-    <img :src="res.thumbnailURL" class="icon">
+    <el-image :src="res.thumbnailURL" fit="cover" class="icon">
+      <div slot="error">
+        <i class="el-icon-picture-outline"></i>
+      </div>
+    </el-image>
+    <!-- <img :src="res.thumbnailURL" class="icon"> -->
     <div class="content" :style="{ 'background-color': randomColor() }">
       <span class="text">{{ res.folderName }}</span>
       <span class="num">{{ res.countFile }}篇</span>
@@ -63,10 +68,15 @@ export default FolderList
     margin-bottom: 15px;
   }
 }
-img.icon {
+.el-image.icon {
   display: block;
   width: 70px;
   height: 70px;
+  background-color: #F5F7FA;
+  color: #909399;
+  text-align: center;
+  line-height: 70px;
+  font-size: 20px;
   position: absolute;
   top: 0px;
   left: 0px;

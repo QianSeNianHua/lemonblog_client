@@ -2,27 +2,22 @@
   <el-dialog
     :visible.sync="dlVisible" :close-on-click-modal="false" :close-on-press-escape="false"
     @close="closeHandle" center width="400px">
-    <div class="header" slot="title">
-      新建分类文件夹
-    </div>
-    <el-form :model="form" :rules="rules" ref="refForm">
+    <div class="header" slot="title">{{ title }}</div>
+    <el-form :model="res" :rules="rules" ref="refForm">
       <el-form-item class="file">
         <input-file
-          :src="form.thumbnailURL" :value="file" :width="100"
+          :src.sync="res.thumbnailURL" :file.sync="file" :width="100"
           :height="100" shape="square">
           <i class="el-icon-picture-outline"></i>
         </input-file>
-        <input
-          type="file" hidden ref="refFile"
-          :value="form.thumbnailURL" accept="image/png, image/jpeg, image/jpg, image/gif" @change="fileChangeHandle">
       </el-form-item>
       <el-form-item class="name" label="名称" prop="folderName">
-        <el-input v-model="form.folderName" placeholder="填写名称，不超过50字"></el-input>
+        <el-input v-model="res.folderName" placeholder="填写名称，不超过50字"></el-input>
       </el-form-item>
     </el-form>
     <div class="footer" slot="footer">
       <el-button type="primary" @click="confirmHandle">确定</el-button>
-      <el-button @click="cancleHandle">取消</el-button>
+      <el-button @click="dlVisible = false">取消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -30,9 +25,15 @@
 <script>
 /**
  * 弹窗，创建分类文件夹
+ * @propSync {boolean} visible 弹窗是否显示
+ * @emit confirm 确认后返回form数据
+ * @prop {string} title 标题
+ * @prop {object} res 数据——{ thumbnailURL: string, folderName: string }
  */
-import { Vue, Component, PropSync, Ref } from 'vue-property-decorator'
+import { Vue, Component, PropSync, Ref, Emit, Prop } from 'vue-property-decorator'
 import InputFile from '@/components/InputFile'
+import * as API from '@/api'
+import CompressImg from '@/until/compressImg'
 
 @Component({
   components: {
@@ -44,11 +45,16 @@ class DialogNewFolder extends Vue {
   @PropSync('visible', { type: Boolean, default: false })
   dlVisible
 
-  // 表单数据
-  form = {
-    folderName: '', // 文件夹名称
-    thumbnailURL: null // 缩略图
-  }
+  // 标题
+  @Prop({ type: String, default: '新建分类文件夹' })
+  title
+
+  // 传进来的数据
+  @Prop({ type: Object, default: { thumbnailURL: '', folderName: '' } })
+  res
+
+  // 图片文件
+  file = null
   // 表单验证
   rules = {
     folderName: [
@@ -57,48 +63,64 @@ class DialogNewFolder extends Vue {
     ]
   }
 
-  // 上传文件的内容
-  file = ''
-
   @Ref()
   refForm
 
-  @Ref()
-  refFile
-
   // 关闭事件
   closeHandle () {
+    let reg = /^blob:/i
+    if (reg.test(this.res.thumbnailURL)) {
+      URL.revokeObjectURL(this.res.thumbnailURL)
+    }
 
+    this.res.thumbnailURL = ''
+    this.res.folderName = ''
+    this.file = null
   }
 
   // 确认事件
-  confirmHandle () {
-    this.refForm.validate(valid => {
-      if (valid) {
+  @Emit('confirm')
+  async confirmHandle () {
+    const vali = async () => {
+      return new Promise((resolve, reject) => {
+        this.refForm.validate(valid => {
+          if (!valid) return
 
-      } else {
-        return false
-      }
-    })
+          if (!this.res.thumbnailURL) {
+            this.$message.warning('需要上传图片，尺寸100×100px，大小100kb')
+
+            return
+          }
+
+          resolve()
+        })
+      })
+    }
+
+    await vali()
+
+    let form = new FormData()
+
+    // 处理图片
+    if (this.file !== null) {
+      this.file = await this.compress()
+      form.append('file', this.file)
+    }
+    form.append('folderName', this.res.folderName)
+
+    return form
   }
 
-  // 取消弹窗事件
-  cancleHandle () {
-    this.dlVisible = false
+  // 图片压缩
+  async compress () {
+    const size = this.file.size / 1024
 
-    this.form.folderName = ''
-    this.form.thumbnailURL = null
-  }
+    let file = this.file
+    if (size > 100) {
+      file = await CompressImg(this.res.thumbnailURL, 250, 250)
+    }
 
-  // 选择文件事件
-  fileClickHandle () {
-    this.form.thumbnailURL = ''
-    this.refFile.click()
-  }
-
-  // 选择文件框改变事件
-  fileChangeHandle (event) {
-    this.form.thumbnailURL = event.srcElement.value
+    return file
   }
 }
 

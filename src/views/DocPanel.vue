@@ -35,7 +35,7 @@ class DocPanel extends Vue {
   setIsLogin
 
   @Action
-  setUserInfoStorage
+  setUserInfo
 
   @Getter
   getUserInfo
@@ -63,7 +63,7 @@ class DocPanel extends Vue {
   logout () {
     this.setToken('')
     this.setIsLogin(false)
-    this.setUserInfoStorage({})
+    this.setUserInfo({})
 
     this.$router.push({ name: 'Login' })
   }

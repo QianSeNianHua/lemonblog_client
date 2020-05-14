@@ -60,3 +60,19 @@ axios.interceptors.response.use(
 export function postIn (url, params) {
   return axios.post(url, JSON.stringify(params))
 }
+
+/**
+ * 文件上传
+ */
+export function postForm (url, params, callback) {
+  return axios.post(url, params, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    onUploadProgress: e => {
+      let progress = (e.loaded / e.total * 100) | 0
+
+      callback(progress)
+    }
+  })
+}

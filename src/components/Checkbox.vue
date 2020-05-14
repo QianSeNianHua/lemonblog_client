@@ -9,7 +9,10 @@
 
 <script>
 /**
- * 多选框
+ * 被拆为单个复选框
+ * @prop {boolean} flag 是否可使用
+ * @model {boolean} 选中状态
+ * @emit change 复选框状态改变事件
  */
 import { Vue, Component, Prop, Model, PropSync, Emit } from 'vue-property-decorator'
 import { v4 as uuidv4 } from 'uuid'

@@ -10,8 +10,7 @@
         </div>
         <template v-if="res.length !== 0">
           <div v-for="item in res" :key="item.folderId" class="folderPanel">
-            <checkbox v-model="item.checked" @change="(checked) => { cbChangeHandle(checked, item) }"></checkbox>
-            <folder-list @click.native="toCategoryDocs(item.folderId)" :res="item" @contextmenu.native.prevent="menuHandle" />
+            <folder-list @click.native="toCategoryDocs(item.folderId)" :res="item" @contextmenu.native.prevent="menuHandle($event, item)" />
           </div>
         </template>
         <template v-else>
@@ -22,7 +21,9 @@
         </template>
       </div>
     </vue-scroll>
-    <dialog-new-folder :visible.sync="nfVisible" />
+    <dialog-new-folder
+      :visible.sync="dlNewFolder.visible" @confirm="confirmHandle" :title="dlNewFolder.title"
+      :res="dlNewFolder.res" />
     <focus-panel
       ref="refFocusPanel" trans="top" trigger="bilateral"
       :x="contextPosi.x" :y="contextPosi.y">
@@ -40,7 +41,6 @@ import { Getter } from 'vuex-class'
 import * as API from '@/api'
 import FolderList from '@/components/FolderList'
 import DialogNewFolder from '@/components/Dialog/DialogNewFolder'
-import Checkbox from '@/components/Checkbox'
 import FocusPanel from '@/components/FocusPanel/FocusPanel'
 import ContextMenu from '@/components/FocusPanel/ContextMenu'
 
@@ -48,7 +48,6 @@ import ContextMenu from '@/components/FocusPanel/ContextMenu'
   components: {
     FolderList,
     DialogNewFolder,
-    Checkbox,
     FocusPanel,
     ContextMenu
   }
@@ -58,40 +57,31 @@ class Category extends Vue {
   page = 1
   // 请求的数据
   res = []
-  // 创建新分类文件夹弹窗的显示隐藏
-  nfVisible = false
+  // 弹窗信息
+  dlNewFolder = {
+    visible: false, // 弹窗的显示隐藏
+    title: '', // 弹窗标题
+    res: { // 数据
+      thumbnailURL: '',
+      folderName: ''
+    }
+  }
   // 右键菜单的位置
   contextPosi = {
     x: 0,
     y: 0
   }
-  // 复选框被选中的数据
-  cbCheckedData = { length: 0 }
   // 右键菜单数据
   contextData = [
     { label: '删除', color: 'red', cmd: 'delete', disable: false },
     { label: '修改', cmd: 'modify', disable: false }
   ]
+  // 当前被选中的项
+  activeFolder = {}
 
   @Watch('$route.params.userId', { immediate: true })
   onUserUUIDChanged (nV, oV) {
-    this.getData(nV)
-  }
-
-  @Watch('cbCheckedData.length', { immediate: true })
-  onCbCheckedDataChanged (nV, oV) {
-    let del = { label: '删除', color: 'red', cmd: 'delete', disable: true } // 有复选框
-    let mod = { label: '修改', cmd: 'modify', disable: true } // 只能一个复选框
-    let len = this.cbCheckedData.length
-
-    if (len > 0) {
-      del = { label: '删除', color: 'red', cmd: 'delete', disable: false }
-    }
-    if (len === 1) {
-      mod = { label: '修改', cmd: 'modify', disable: false }
-    }
-
-    this.contextData = [del, mod]
+    this.apiFolderList(nV)
   }
 
   @Ref()
@@ -100,33 +90,19 @@ class Category extends Vue {
   @Getter
   getIsLogin
 
-  // 接口获取分类列表
-  getData (userUUID) {
-    API.folder.getFolderList(userUUID, this.page).then(res => {
-      if (res.code !== 0) return
-
-      this.res = res.data.rows.map(item => {
-        item.checked = false
-
-        return item
-      })
-    })
-  }
+  @Getter
+  getUserInfo
 
   // 文件夹的点击事件
   toCategoryDocs (folderId) {
     this.$router.push({ name: 'PanelCategoryDocs', params: { folderId } })
   }
 
-  // 创建分类文件夹
-  createFolderHandle () {
-    this.nfVisible = true
-  }
-
   // folderList的右键菜单事件
-  menuHandle (event) {
+  menuHandle (event, item) {
     this.contextPosi.x = event.clientX || event.pageX || event.x
     this.contextPosi.y = event.clientY || event.pageY || event.y
+    this.activeFolder = { ...item }
 
     this.refFocusPanel.focus()
   }
@@ -154,10 +130,7 @@ class Category extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      this.$message({
-        type: 'success',
-        message: '删除成功!'
-      })
+      this.apiDeleteFolder(this.activeFolder.folderId)
     }).catch(() => {
       this.$message({
         type: 'info',
@@ -168,18 +141,65 @@ class Category extends Vue {
 
   // 修改
   cmdModify () {
-
+    this.dlNewFolder.title = '修改分类文件夹'
+    this.dlNewFolder.res = {
+      thumbnailURL: this.activeFolder.thumbnailURL,
+      folderName: this.activeFolder.folderName
+    }
+    this.dlNewFolder.visible = true
   }
 
-  // 复选框事件
-  cbChangeHandle (checked, item) {
-    if (checked) {
-      this.cbCheckedData[item.folderId] = item
-      this.cbCheckedData.length++
-    } else {
-      Reflect.deleteProperty(this.cbCheckedData, item.folderId)
-      this.cbCheckedData.length--
+  // 确认新建文件夹
+  confirmHandle (formData) {
+    if (this.activeFolder.folderId) {
+      formData.append('folderId', this.activeFolder.folderId)
     }
+    this.apiCreateFolder(formData)
+  }
+
+  // 显示弹窗，新建文件夹
+  createFolderHandle () {
+    this.dlNewFolder.title = '新建分类文件夹'
+    this.dlNewFolder.res = {
+      thumbnailURL: '',
+      folderName: ''
+    }
+    this.activeFolder = {}
+    this.dlNewFolder.visible = true
+  }
+
+  // 接口获取分类列表
+  apiFolderList (userUUID) {
+    API.folder.getFolderList(userUUID, this.page).then(res => {
+      if (res.code !== 0) return
+
+      this.res = res.data.rows
+    })
+  }
+
+  // 接口，创建分类文件夹
+  apiCreateFolder (formData) {
+    API.folder.createFolder(formData, progress => {
+      console.log(progress)
+    }).then(res => {
+      this.dlNewFolder.visible = false
+
+      this.$message.success(res.msg)
+
+      this.apiFolderList(this.getUserInfo.userUUID)
+    })
+  }
+
+  // 接口，删除分类文件夹
+  apiDeleteFolder (folderId) {
+    API.folder.deleteFolder(folderId).then(res => {
+      this.$message({
+        type: 'success',
+        message: '删除成功!'
+      })
+
+      this.apiFolderList(this.getUserInfo.userUUID)
+    })
   }
 }
 export default Category
@@ -211,10 +231,6 @@ export default Category
 
   &:not(:last-child) {
     margin-bottom: 20px;
-  }
-  &>.checkbox {
-    position: absolute;
-    top: 53px;
   }
   .folderList {
     width: initial;

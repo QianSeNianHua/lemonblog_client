@@ -1,38 +1,39 @@
 <template>
   <div class="inputFile">
     <el-image
-      :src="src" :fit="fit" :style="style">
-      <div slot="error" class="imageSlot" @click="fileClickHandle">
+      :src="srcSync" :fit="fit" :style="style"
+      @click.native="fileClickHandle" :lazy="true">
+      <div slot="error">
         <slot></slot>
       </div>
     </el-image>
     <input
       type="file" hidden ref="refFile"
-      :value="value" accept="image/png, image/jpeg, image/jpg, image/gif" @change="fileChangeHandle">
+      accept="image/png, image/jpeg, image/jpg, image/gif" @change="fileChangeHandle">
   </div>
 </template>
 
 <script>
 /**
  * 图片上传
- * @prop src 图片正确显示的地址
- * @prop value 文件内容
+ * @prop src 图片地址
+ * @prop file 图片文件
  * @prop shape 形状
  * @prop fit 填充类型
  * @prop width 图片宽度
  * @prop height 图片高度
  */
-import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
+import { Vue, Component, Prop, Ref, PropSync } from 'vue-property-decorator'
 
 @Component
 class InputFile extends Vue {
-  // 图片正确显示
-  @Prop({ type: String, default: '' })
-  src
+  // 图片地址
+  @PropSync('src', { type: String, default: '' })
+  srcSync
 
-  // 文件内容
-  @Prop()
-  value
+  // 图片文件
+  @PropSync('file', { type: File, default: null })
+  fileSync
 
   // 形状，circle 默认，圆形；square 圆角方形
   @Prop({ type: String, default: 'circle' })
@@ -64,12 +65,21 @@ class InputFile extends Vue {
 
   // 打开文件选择窗
   fileClickHandle () {
+    let reg = /^blob:/i
+    if (reg.test(this.srcSync)) {
+      URL.revokeObjectURL(this.srcSync)
+    }
+
+    this.refFile.value = ''
     this.refFile.click()
   }
 
   // 文件选择后
   fileChangeHandle (event) {
-    this.value = event.srcElement.value
+    if (event.srcElement.files.length === 0) return
+
+    const file = this.fileSync = event.srcElement.files[0]
+    const src = this.srcSync = URL.createObjectURL(file)
   }
 }
 

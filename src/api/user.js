@@ -1,5 +1,5 @@
 import { get, post } from './http.js'
-import { postIn } from './authHttp'
+import { postIn } from './authHttp.js'
 
 // 首页获取用户信息
 export function homeInfo (userUUID) {
