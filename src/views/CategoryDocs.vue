@@ -16,6 +16,9 @@
         <i class="el-icon-arrow-right"></i>
       </button>
     </div>
+    <button class="btnCreate" @click="createHandle">
+      <i class="el-icon-plus"></i>
+    </button>
   </div>
 </template>
 
@@ -43,6 +46,9 @@ class CategoryDocs extends Vue {
   // 请求的分类列表数据
   folderRes = { rows: [] }
 
+  // 打开的新标签页
+  newPage = null
+
   mounted () {
     const userUUID = this.$route.params.userId
     const fid = this.$route.params.folderId
@@ -53,7 +59,7 @@ class CategoryDocs extends Vue {
 
   @Watch('$route.params')
   onUserUUIDChanged (nV, oV) {
-    this.getFileList(nV.userId, nV.folderId)
+    this.getFileList(nV.userId, parseInt(nV.folderId))
 
     if (nV.userId !== oV.userId) {
       this.getFolderList(nV.userId)
@@ -98,6 +104,19 @@ class CategoryDocs extends Vue {
 
     this.getFileList(userUUID, fid, current)
   }
+
+  // 打开新页面，创建文章
+  createHandle () {
+    if (this.newPage) {
+      this.newPage.close()
+    }
+
+    const folderId = this.$route.params.folderId
+
+    const route = this.$router.resolve({ name: 'ArticleEditor', params: { folderId } })
+
+    this.newPage = window.open(route.href, '_blank')
+  }
 }
 
 export default CategoryDocs
@@ -140,6 +159,26 @@ export default CategoryDocs
     font-size: 20px;
     outline: none;
     cursor: pointer;
+  }
+}
+.btnCreate {
+  position: fixed;
+  bottom: 50px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #409EFF;
+  outline: none;
+  border: 0px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 60px;
+  text-align: center;
+  color: white;
+
+  &:hover {
+    box-shadow: -1px 2px 5px 1px rgba(0,0,0,0.25);
   }
 }
 </style>

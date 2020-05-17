@@ -15,27 +15,27 @@
 	// 	],
 	// 	"description": "Log output to console"
   // }
-  "demo": {
+  "vuets": {
     "prefix": "vuets",
     "body": [
       "<template>",
-      "<div class=\"$1\">",
+      "<div class=\"${1:$TM_FILENAME_BASE}\">",
       "",
       "</div>",
       "</template>",
       "",
       "<script>",
       "/**",
-      " * $2",
+      " * ${2:$TM_FILENAME_BASE}",
       " */",
       "",
       "import { Vue, Component } from 'vue-property-decorator'",
       "",
       "@Component",
-      "class $3 extends Vue {",
+      "class ${3:$TM_FILENAME_BASE} extends Vue {",
       "}",
       "",
-      "export default $4",
+      "export default ${4:$TM_FILENAME_BASE}",
       "</script>",
       "",
       "<style lang=\"less\" scoped>",

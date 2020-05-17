@@ -147,7 +147,7 @@ export default ArticleList
 }
 .box {
   margin: 0px auto;
-  margin-top: 40px;
+  padding-top: 40px;
   overflow: hidden;
 }
 .content_title {

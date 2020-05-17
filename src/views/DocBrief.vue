@@ -10,9 +10,6 @@
         <span>页面空数据</span>
       </div>
     </template>
-    <button class="btnCreate" @click="createHandle">
-      <i class="el-icon-plus"></i>
-    </button>
   </div>
 </template>
 
@@ -54,13 +51,6 @@ class DocBrief extends Vue {
   // 改变页码
   pageChangeHandle (current) {
     this.getFileList(this.$route.params.userId, current)
-  }
-
-  // 打开新页面，创建文章
-  createHandle () {
-    const route = this.$router.resolve({ name: 'ArticleEditor' })
-
-    window.open(route.href, '_blank')
   }
 }
 

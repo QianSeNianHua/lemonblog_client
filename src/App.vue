@@ -9,7 +9,7 @@ import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import * as API from '@/api'
 
-const nonePage = ['Login']
+const nonePage = ['Login', 'Register', 'ArticleEditor', 'NotFound']
 
 @Component
 class App extends Vue {
@@ -49,7 +49,7 @@ class App extends Vue {
   onUserIdChanged (nV, oV) {
     if (this.getIsLogin && nV !== undefined && nV !== this.getUserInfo.userUUID) {
       // 不允许查看普通用户
-      this.$router.push({ name: 'NotFound' })
+      this.$router.replace({ name: 'NotFound' })
     } else if (nV !== undefined) {
       this.apiUserInfo(nV)
     }

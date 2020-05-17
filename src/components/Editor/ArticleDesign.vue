@@ -10,6 +10,8 @@
  */
 
 import { Vue, Component } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
+import * as API from '@/api'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 
 @Component
@@ -20,6 +22,22 @@ class ArticleDesign extends Vue {
   editorData = '<p>Content of the editor.</p>'
   // 配置
   editorConfig = {}
+
+  @Getter
+  getIsLogin
+
+  created () {
+    this.apiUserInfoIn().then(res => {
+
+    }).catch(_err => {
+      this.$router.replace({ name: 'NotFound' })
+    })
+  }
+
+  // 获取登录用户信息
+  apiUserInfoIn () {
+    return API.user.inUserInfo()
+  }
 }
 
 export default ArticleDesign
