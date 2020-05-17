@@ -14,6 +14,7 @@ const nonePage = ['Login', 'Register', 'ArticleEditor', 'NotFound']
 @Component
 class App extends Vue {
   async created () {
+    console.log(123)
     const token = window.localStorage.getItem('token')
     const routeName = this.$route.name
     const userUUID = this.$route.params.userId
