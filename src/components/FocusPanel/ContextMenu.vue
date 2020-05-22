@@ -6,7 +6,14 @@
           <li
             class="menu-item__one" :key="i" :style="{ color: one.color }"
             v-if="!one.hr" @click="command(one.cmd, one.disable)" :data-disable="typeof one.disable === 'boolean' ? one.disable : false">
-            <span class="leftIcon icon" v-html="one.icon"></span>
+            <span class="leftIcon icon">
+              <template v-if="one.icon">
+                <i :class="one.icon"></i>
+              </template>
+              <template v-else-if="one.svg">
+                <icon-svg :icon-class="one.svg"></icon-svg>
+              </template>
+            </span>
             <span class="label">{{ one.label }}</span>
           </li>
           <hr :key="i" v-else>
@@ -19,11 +26,12 @@
 <script>
 /**
  * 右键菜单
- * @prop width 容器宽度
+ * @prop {string} width 容器宽度
  * @prop data 右键菜单数据
+ * @prop {string} icon el-icon图标名称
+ * @prop {string} svg svg图标名称
  * @emit command 菜单的执行命令
  */
-
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 
 @Component
@@ -35,7 +43,7 @@ class ContextMenu extends Vue {
   /**
    * 右键菜单
    * [
-   *   { label: '登录', icon: '<i class="el-icon-delete"></i>', color: 'red', cmd: 'login', disable: true },
+   *   { label: '登录', icon: 'el-icon-delete', svg: 'QQ', color: 'red', cmd: 'login', disable: true },
    *   { hr: true }
    * ]
    */

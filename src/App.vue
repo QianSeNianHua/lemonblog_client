@@ -9,12 +9,11 @@ import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import * as API from '@/api'
 
-const nonePage = ['Login', 'Register', 'ArticleEditor', 'NotFound']
+const nonePage = ['Login', 'Register', 'NotFound']
 
 @Component
 class App extends Vue {
   async created () {
-    console.log(123)
     const token = window.localStorage.getItem('token')
     const routeName = this.$route.name
     const userUUID = this.$route.params.userId
@@ -49,7 +48,7 @@ class App extends Vue {
   @Watch('$route.params.userId')
   onUserIdChanged (nV, oV) {
     if (this.getIsLogin && nV !== undefined && nV !== this.getUserInfo.userUUID) {
-      // 不允许查看普通用户
+      // 登录后，不允许查看普通用户
       this.$router.replace({ name: 'NotFound' })
     } else if (nV !== undefined) {
       this.apiUserInfo(nV)

@@ -112,8 +112,9 @@ class CategoryDocs extends Vue {
     }
 
     const folderId = this.$route.params.folderId
+    const userId = this.$route.params.userId
 
-    const route = this.$router.resolve({ name: 'ArticleEditor', params: { folderId } })
+    const route = this.$router.resolve({ name: 'ArticleEditor', params: { userId, folderId } })
 
     this.newPage = window.open(route.href, '_blank')
   }

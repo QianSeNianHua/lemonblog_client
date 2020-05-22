@@ -28,7 +28,7 @@
  * @propSync {boolean} visible 弹窗是否显示
  * @emit confirm 确认后返回form数据
  * @prop {string} title 标题
- * @prop {object} res 数据——{ thumbnailURL: string, folderName: string }
+ * @prop {object} res 数据——{ thumbnailURL: string, folderName: string, folderId: number | null } 传folderId表示修改
  */
 import { Vue, Component, PropSync, Ref, Emit, Prop } from 'vue-property-decorator'
 import InputFile from '@/components/InputFile'
@@ -50,7 +50,7 @@ class DialogNewFolder extends Vue {
   title
 
   // 传进来的数据
-  @Prop({ type: Object, default: { thumbnailURL: '', folderName: '' } })
+  @Prop({ type: Object, default: { thumbnailURL: '', folderName: '', folderId: null } })
   res
 
   // 图片文件
@@ -75,6 +75,7 @@ class DialogNewFolder extends Vue {
 
     this.res.thumbnailURL = ''
     this.res.folderName = ''
+    this.res.folderId = null
     this.file = null
   }
 
@@ -105,6 +106,9 @@ class DialogNewFolder extends Vue {
     if (this.file !== null) {
       this.file = await this.compress()
       form.append('file', this.file)
+    }
+    if (this.res.folderId !== null) {
+      form.append('folderId', this.res.folderId)
     }
     form.append('folderName', this.res.folderName)
 

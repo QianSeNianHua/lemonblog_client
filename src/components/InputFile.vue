@@ -16,8 +16,8 @@
 <script>
 /**
  * 图片上传
- * @prop src 图片地址
- * @prop file 图片文件
+ * @propSrc src 图片地址
+ * @propSrc file 图片文件
  * @prop shape 形状
  * @prop fit 填充类型
  * @prop width 图片宽度

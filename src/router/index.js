@@ -15,8 +15,6 @@ import UserInfo from '@/views/UserInfo'
 import ArticleEditor from '@/views/ArticleEditor'
 import Demo from '@/components/Test/Demo'
 
-import Parent from '@/components/Test/Parent'
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -90,7 +88,7 @@ const routes = [
   },
   {
     // 文章编辑器
-    path: '/editor/:folderId',
+    path: '/editor/:userId/:folderId',
     name: 'ArticleEditor',
     component: ArticleEditor
   },
